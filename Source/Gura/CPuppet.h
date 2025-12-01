@@ -28,6 +28,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//Base And Movement
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <class USpringArmComponent> SpringArm;
@@ -41,6 +42,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<class UInputAction> AttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<class UInputAction> PowerAttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<class UInputAction> DashAction;
+
 public:
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);
@@ -48,11 +58,49 @@ public:
 	UFUNCTION()
 	void Look(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void Attack(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void PowerAttack();
+
+	void Charged(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void DoRun();
+
+	UFUNCTION()
+	void UnDoRun();
+
+	UFUNCTION()
+	void Dash();
+
+	//State
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
 	float CharacterSpeed = 300.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	float CurrentHP = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	float MaxHP = 100;
+
+	float PowerChargingTime = 0;
 
 public:
 	FORCEINLINE float GetCharacterSpeed() { return CharacterSpeed; }
 
 	void SetCharacterSpeed(float ChangeSpeed);
+
+	FORCEINLINE float GetCurrentHP() { return CurrentHP; }
+
+	FORCEINLINE void SetCurrentHP(float ChangeHP) { CurrentHP = ChangeHP; }
+
+	FORCEINLINE float GetMaxHP() { return MaxHP; }
+
+	//Anime
+protected:
+	uint8 bIsRun : 1 = false;
+
 };

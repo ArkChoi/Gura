@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACPuppet::ACPuppet()
@@ -26,6 +27,8 @@ ACPuppet::ACPuppet()
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight()));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0));
+
+	SetCharacterSpeed(CharacterSpeed);
 }
 
 // Called when the game starts or when spawned
@@ -51,6 +54,12 @@ void ACPuppet::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACPuppet::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACPuppet::Look);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ACPuppet::Attack);
+		EnhancedInputComponent->BindAction(PowerAttackAction, ETriggerEvent::Started, this, &ACPuppet::Charged);
+		EnhancedInputComponent->BindAction(PowerAttackAction, ETriggerEvent::Completed, this, &ACPuppet::PowerAttack);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACPuppet::DoRun);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &ACPuppet::UnDoRun);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Canceled, this, &ACPuppet::Dash);
 	}
 
 }
@@ -78,6 +87,46 @@ void ACPuppet::Look(const FInputActionValue& Value)
 
 	AddControllerPitchInput(LookValue.Y);
 	AddControllerYawInput(LookValue.X);
+}
+
+void ACPuppet::Attack(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Attack"));
+}
+
+void ACPuppet::PowerAttack()
+{
+	float NowTime = UGameplayStatics::GetTimeSeconds(this);
+	PowerChargingTime = NowTime - PowerChargingTime;
+
+	if (PowerChargingTime >= 1.5f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PowerChargeAttack"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PowerAttack"));
+	}
+}
+
+void ACPuppet::Charged(const FInputActionValue& Value)
+{
+	PowerChargingTime = UGameplayStatics::GetTimeSeconds(this);
+}
+
+void ACPuppet::DoRun()
+{
+	SetCharacterSpeed(600.f);
+}
+
+void ACPuppet::UnDoRun()
+{
+	SetCharacterSpeed(300.f);
+}
+
+void ACPuppet::Dash()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Dash"));
 }
 
 void ACPuppet::SetCharacterSpeed(float ChangeSpeed)
