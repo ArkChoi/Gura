@@ -43,6 +43,15 @@ void ACPuppet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bIsDash)
+	{
+		float TempNum = 0;
+		while (TempNum < 1)
+		{
+			TempNum = FMath::Lerp(TempNum, 1.f, 0.5f);
+			AddActorLocalOffset(FVector(TempNum, 0, 0));
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -126,12 +135,28 @@ void ACPuppet::UnDoRun()
 
 void ACPuppet::Dash()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Dash"));
+	if (bIsDash)
+	{
+		return;
+	}
+
+	bIsDash = true;
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	//카메라 쭉 늘어나서 천천히 따라가는 코드 추가 필요
 }
 
 void ACPuppet::SetCharacterSpeed(float ChangeSpeed)
 {
 	CharacterSpeed = ChangeSpeed;
 	GetCharacterMovement()->MaxWalkSpeed = CharacterSpeed;
+}
+
+void ACPuppet::EndDash()
+{
+	bIsDash = false;
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 

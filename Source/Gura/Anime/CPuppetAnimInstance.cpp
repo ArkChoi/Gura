@@ -14,5 +14,6 @@ void UCPuppetAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		GroundSpeed = Player->GetCharacterMovement()->Velocity.Size2D();
 		Direction = UKismetAnimationLibrary::CalculateDirection(Player->GetCharacterMovement()->Velocity, Player->GetActorRotation());
+		bIsDash = Player->GetbIsDash();
 	}
 }

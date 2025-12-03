@@ -103,4 +103,12 @@ public:
 protected:
 	uint8 bIsRun : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bIsDash : 1 = false;
+
+public:
+	FORCEINLINE float GetbIsDash() { return bIsDash; }
+
+	void EndDash();
+
 };
