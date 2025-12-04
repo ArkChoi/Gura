@@ -45,12 +45,7 @@ void ACPuppet::Tick(float DeltaTime)
 
 	if (bIsDash)
 	{
-		float TempNum = 0;
-		while (TempNum < 1)
-		{
-			TempNum = FMath::Lerp(TempNum, 1.f, 0.5f);
-			AddActorLocalOffset(FVector(TempNum, 0, 0));
-		}
+		AddActorLocalOffset(FVector(4.5f, 0, 0));
 	}
 }
 
