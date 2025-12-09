@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Animation/AnimMontage.h"
 
 // Sets default values
 ACPuppet::ACPuppet()
@@ -95,7 +96,9 @@ void ACPuppet::Look(const FInputActionValue& Value)
 
 void ACPuppet::Attack(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack"));
+	ComboCount = (ComboCount % 3) + 1;
+	FString SectionName = FString::Printf(TEXT("%d"), ComboCount);
+	PlayAnimMontage(AttackMontage, 1.0f, FName(*SectionName));
 }
 
 void ACPuppet::PowerAttack()
@@ -138,6 +141,7 @@ void ACPuppet::Dash()
 	bIsDash = true;
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	PlayAnimMontage(DashMontage);
 
 	//카메라 쭉 늘어나서 천천히 따라가는 코드 추가 필요
 }
@@ -146,6 +150,11 @@ void ACPuppet::SetCharacterSpeed(float ChangeSpeed)
 {
 	CharacterSpeed = ChangeSpeed;
 	GetCharacterMovement()->MaxWalkSpeed = CharacterSpeed;
+}
+
+void ACPuppet::SetComboCount(int32 InComboCount)
+{
+	ComboCount = InComboCount;
 }
 
 void ACPuppet::EndDash()

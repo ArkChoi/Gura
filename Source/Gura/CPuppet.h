@@ -8,6 +8,8 @@
 
 struct FInputActionValue;
 
+class UAnimMontage;
+
 UCLASS()
 class GURA_API ACPuppet : public ACharacter
 {
@@ -88,6 +90,9 @@ protected:
 
 	float PowerChargingTime = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	int32 ComboCount = 0;
+
 public:
 	FORCEINLINE float GetCharacterSpeed() { return CharacterSpeed; }
 
@@ -99,12 +104,22 @@ public:
 
 	FORCEINLINE float GetMaxHP() { return MaxHP; }
 
+	void SetComboCount(int32 InComboCount);
+
+	FORCEINLINE int32 GetComboCount() { return ComboCount; }
+
 	//Anime
 protected:
 	uint8 bIsRun : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsDash : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<UAnimMontage> DashMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<UAnimMontage> AttackMontage;
 
 public:
 	FORCEINLINE float GetbIsDash() { return bIsDash; }
