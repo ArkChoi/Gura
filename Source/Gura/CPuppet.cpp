@@ -96,8 +96,32 @@ void ACPuppet::Look(const FInputActionValue& Value)
 
 void ACPuppet::Attack(const FInputActionValue& Value)
 {
+	if (bIsDash)
+	{
+		return;
+	}
+
 	ComboCount = (ComboCount % 3) + 1;
-	FString SectionName = FString::Printf(TEXT("%d"), ComboCount);
+
+	USkeletalMeshComponent* MeshComponent = GetMesh();
+	if (MeshComponent)
+	{
+		UAnimInstance* AnimInstance = MeshComponent->GetAnimInstance();
+;
+		if (AnimInstance && !AnimInstance->Montage_IsPlaying(AttackMontage))
+		{
+			PlayComboMontage(ComboCount);
+		}
+		else
+		{
+			bIsComboAttack = true;
+		}
+	}
+}
+
+void ACPuppet::PlayComboMontage(int32 InComboCount)
+{
+	FString SectionName = FString::Printf(TEXT("%d"), InComboCount);
 	PlayAnimMontage(AttackMontage, 1.0f, FName(*SectionName));
 }
 
@@ -155,6 +179,11 @@ void ACPuppet::SetCharacterSpeed(float ChangeSpeed)
 void ACPuppet::SetComboCount(int32 InComboCount)
 {
 	ComboCount = InComboCount;
+}
+
+void ACPuppet::ReSetbIsComboAttack()
+{
+bIsComboAttack = false;
 }
 
 void ACPuppet::EndDash()

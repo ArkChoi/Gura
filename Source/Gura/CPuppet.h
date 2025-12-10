@@ -63,6 +63,8 @@ public:
 	UFUNCTION()
 	void Attack(const FInputActionValue& Value);
 
+	void PlayComboMontage(int32 InComboCount);
+
 	UFUNCTION()
 	void PowerAttack();
 
@@ -76,6 +78,7 @@ public:
 
 	UFUNCTION()
 	void Dash();
+
 
 	//State
 protected:
@@ -115,6 +118,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsDash : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bIsComboAttack : 1 = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> DashMontage;
 
@@ -124,6 +130,9 @@ protected:
 public:
 	FORCEINLINE float GetbIsDash() { return bIsDash; }
 
-	void EndDash();
+	FORCEINLINE float GetbIsComboAttack() { return bIsComboAttack; }
 
+	void ReSetbIsComboAttack();
+
+	void EndDash();
 };

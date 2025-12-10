@@ -16,6 +16,13 @@ void UAnimNotify_ComboReset::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 	ACPuppet* BaseCharacter = Cast<ACPuppet>(MeshComp->GetOwner());
 	if (BaseCharacter)
 	{
+		if (BaseCharacter->GetbIsComboAttack())
+		{
+			BaseCharacter->ReSetbIsComboAttack();
+			BaseCharacter->PlayComboMontage(BaseCharacter->GetComboCount());
+			return;
+		}
 		BaseCharacter->SetComboCount(0);
+		BaseCharacter->ReSetbIsComboAttack();
 	}
 }
