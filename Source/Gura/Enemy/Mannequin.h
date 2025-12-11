@@ -33,4 +33,17 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <class USkeletalMeshComponent> Mesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterState")
+	float MaxHP = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterState")
+	float CurrentHP = MaxHP;
+
+public:
+	FORCEINLINE float GetCurrentHP() { return CurrentHP; }
+
+	FORCEINLINE void SetCurrentHP(float ChangeHP) { CurrentHP = ChangeHP; }
+
+	FORCEINLINE float GetMaxHP() { return MaxHP; }
+
 };

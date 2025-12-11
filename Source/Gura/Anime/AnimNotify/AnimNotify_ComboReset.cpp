@@ -18,11 +18,9 @@ void UAnimNotify_ComboReset::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 	{
 		if (BaseCharacter->GetbIsComboAttack())
 		{
-			BaseCharacter->ReSetbIsComboAttack();
 			BaseCharacter->PlayComboMontage(BaseCharacter->GetComboCount());
 			return;
 		}
-		BaseCharacter->SetComboCount(0);
-		BaseCharacter->ReSetbIsComboAttack();
+		BaseCharacter->SetComboCount(1);
 	}
 }

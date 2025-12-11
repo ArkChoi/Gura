@@ -94,7 +94,7 @@ protected:
 	float PowerChargingTime = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
-	int32 ComboCount = 0;
+	int32 ComboCount = 1;
 
 public:
 	FORCEINLINE float GetCharacterSpeed() { return CharacterSpeed; }

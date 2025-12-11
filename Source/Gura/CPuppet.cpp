@@ -101,8 +101,6 @@ void ACPuppet::Attack(const FInputActionValue& Value)
 		return;
 	}
 
-	ComboCount = (ComboCount % 3) + 1;
-
 	USkeletalMeshComponent* MeshComponent = GetMesh();
 	if (MeshComponent)
 	{
@@ -121,8 +119,17 @@ void ACPuppet::Attack(const FInputActionValue& Value)
 
 void ACPuppet::PlayComboMontage(int32 InComboCount)
 {
+	if (ComboCount > 3)
+	{
+		SetComboCount(1);
+		ReSetbIsComboAttack();
+		return;
+	}
+
 	FString SectionName = FString::Printf(TEXT("%d"), InComboCount);
 	PlayAnimMontage(AttackMontage, 1.0f, FName(*SectionName));
+	ReSetbIsComboAttack();
+	ComboCount++;
 }
 
 void ACPuppet::PowerAttack()
@@ -183,7 +190,7 @@ void ACPuppet::SetComboCount(int32 InComboCount)
 
 void ACPuppet::ReSetbIsComboAttack()
 {
-bIsComboAttack = false;
+	bIsComboAttack = false;
 }
 
 void ACPuppet::EndDash()
