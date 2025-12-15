@@ -135,4 +135,9 @@ public:
 	void ReSetbIsComboAttack();
 
 	void EndDash();
+
+public:
+	UFUNCTION()
+	void ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
 };

@@ -37,6 +37,7 @@ void ACPuppet::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	OnTakeAnyDamage.AddDynamic(this, &ACPuppet::ProcessOnTakeAnyDamage);
 }
 
 // Called every frame
@@ -172,7 +173,7 @@ void ACPuppet::Dash()
 	bIsDash = true;
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	PlayAnimMontage(DashMontage);
+	PlayAnimMontage(DashMontage,2.5f);
 
 	//카메라 쭉 늘어나서 천천히 따라가는 코드 추가 필요
 }
@@ -200,3 +201,8 @@ void ACPuppet::EndDash()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
+void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	CurrentHP -= Damage;
+	UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
+}

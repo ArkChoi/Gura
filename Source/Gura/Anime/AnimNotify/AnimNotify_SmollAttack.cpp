@@ -3,7 +3,7 @@
 
 #include "AnimNotify_SmollAttack.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "../../CPuppet.h"
+#include "GameFramework/Character.h"
 #include "kismet/GameplayStatics.h"
 #include "../../DamageType/StrikeDamageType.h"
 
@@ -16,7 +16,7 @@ void UAnimNotify_SmollAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	ACPuppet* Character = Cast<ACPuppet>(MeshComp->GetOwner());
+	ACharacter* Character = Cast<ACharacter>(MeshComp->GetOwner());
 	if (Character)
 	{
 		FString TempString = TEXT("hand_r");
