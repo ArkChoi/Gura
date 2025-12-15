@@ -13,17 +13,16 @@ AMannequin::AMannequin()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
-
-	RootComponent = CapsuleComponent;
-
-	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(RootComponent);
+	GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+	FRotator TempRotation(0, -90.f,0);
+	FVector TempLocation(0,0,-90.f);
+	FVector TempScale(1,1,1);
+	GetMesh()->SetRelativeTransform(FTransform(TempRotation, TempLocation, TempScale));
 
 	WidgetHP = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetHP"));
 	WidgetHP->SetupAttachment(RootComponent);
 	WidgetHP->SetWidgetSpace(EWidgetSpace::Screen);
-	WidgetHP->SetRelativeLocation(FVector(0,0,80.f));
+	WidgetHP->SetRelativeLocation(FVector(0,0,110.f));
 }
 
 // Called when the game starts or when spawned
@@ -62,7 +61,6 @@ void AMannequin::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, cons
 	UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
 
 	OnChangeHP.Broadcast(CurrentHP / MaxHP);
-	UE_LOG(LogTemp, Warning, TEXT("Broadcast"));
 }
 
 void AMannequin::RecoverHP()

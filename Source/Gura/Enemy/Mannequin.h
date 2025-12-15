@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 //#include "GenericTeamAgentInterface.h"
 #include "Mannequin.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeHP, const float, InHP);
 
 UCLASS()
-class GURA_API AMannequin : public APawn
+class GURA_API AMannequin : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -33,12 +33,6 @@ public:
 	FOnChangeHP OnChangeHP;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
-	TObjectPtr <class UCapsuleComponent> CapsuleComponent;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
-	TObjectPtr <class USkeletalMeshComponent> Mesh;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterState")
 	float MaxHP = 100;
 
