@@ -37,8 +37,6 @@ void UAnimNotify_SmollAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 		if (ResultHit.bBlockingHit)
 		{
 			UGameplayStatics::ApplyDamage(ResultHit.GetActor(), 10.f, Character->GetController(), Character, UStrikeDamageType::StaticClass());
-
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *ResultHit.GetActor()->GetName());
 		}
 	}
 }

@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+//#include "GenericTeamAgentInterface.h"
 #include "Mannequin.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeHP, const float, InHP);
 
 UCLASS()
 class GURA_API AMannequin : public APawn
@@ -26,6 +29,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	FOnChangeHP OnChangeHP;
+
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <class UCapsuleComponent> CapsuleComponent;
@@ -38,6 +44,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterState")
 	float CurrentHP = MaxHP;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TObjectPtr <class UWidgetComponent> WidgetHP;
 
 public:
 	FORCEINLINE float GetCurrentHP() { return CurrentHP; }
@@ -46,4 +55,10 @@ public:
 
 	FORCEINLINE float GetMaxHP() { return MaxHP; }
 
+public:
+	UFUNCTION()
+	void ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser );
+
+public:
+	void RecoverHP();
 };
