@@ -21,6 +21,6 @@ void UAnimNotify_ComboReset::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 			BaseCharacter->PlayComboMontage(BaseCharacter->GetComboCount());
 			return;
 		}
-		BaseCharacter->SetComboCount(1);
+		BaseCharacter->ReSetComboCount();
 	}
 }

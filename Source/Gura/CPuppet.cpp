@@ -97,7 +97,7 @@ void ACPuppet::Look(const FInputActionValue& Value)
 
 void ACPuppet::Attack(const FInputActionValue& Value)
 {
-	if (bIsDash)
+	if (!GetCanPlayAnimMontage())
 	{
 		return;
 	}
@@ -122,7 +122,7 @@ void ACPuppet::PlayComboMontage(int32 InComboCount)
 {
 	if (ComboCount > 3)
 	{
-		SetComboCount(1);
+		ReSetComboCount();
 		ReSetbIsComboAttack();
 		return;
 	}
@@ -165,7 +165,7 @@ void ACPuppet::UnDoRun()
 
 void ACPuppet::Dash()
 {
-	if (bIsDash)
+	if (!GetCanPlayAnimMontage())
 	{
 		return;
 	}
@@ -184,9 +184,9 @@ void ACPuppet::SetCharacterSpeed(float ChangeSpeed)
 	GetCharacterMovement()->MaxWalkSpeed = CharacterSpeed;
 }
 
-void ACPuppet::SetComboCount(int32 InComboCount)
+void ACPuppet::ReSetComboCount()
 {
-	ComboCount = InComboCount;
+	ComboCount = 1;
 }
 
 void ACPuppet::ReSetbIsComboAttack()
@@ -201,13 +201,46 @@ void ACPuppet::EndDash()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
-void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+bool ACPuppet::GetCanPlayAnimMontage()
 {
-	CurrentHP -= Damage;
-	UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
+	USkeletalMeshComponent* MeshComponent = GetMesh();
+	if (MeshComponent)
+	{
+		UAnimInstance* AnimInstance = MeshComponent->GetAnimInstance();
+		;
+		if (AnimInstance && AnimInstance->Montage_IsPlaying(DashMontage))
+		{
+			return false;
+		}
+		else if (AnimInstance && AnimInstance->Montage_IsPlaying(HitMontage))
+		{
+			return false;
+		}
+	}
 
+	return true;
+}
+
+void ACPuppet::PlayHitAnimMontage()
+{
 	if (HitMontage)
 	{
 		PlayAnimMontage(HitMontage);
 	}
+
+	EndDash();
+	ReSetComboCount();
+}
+
+void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	if (!GetCanPlayAnimMontage())
+	{
+		return;
+	}
+
+	CurrentHP -= Damage;
+	UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
+
+	PlayHitAnimMontage();
 }

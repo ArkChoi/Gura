@@ -107,7 +107,7 @@ public:
 
 	FORCEINLINE float GetMaxHP() { return MaxHP; }
 
-	void SetComboCount(int32 InComboCount);
+	void ReSetComboCount();
 
 	FORCEINLINE int32 GetComboCount() { return ComboCount; }
 
@@ -138,6 +138,10 @@ public:
 	void ReSetbIsComboAttack();
 
 	void EndDash();
+
+	bool GetCanPlayAnimMontage();
+
+	void PlayHitAnimMontage();
 
 public:
 	UFUNCTION()
