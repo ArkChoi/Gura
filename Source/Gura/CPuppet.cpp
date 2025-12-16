@@ -205,4 +205,9 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 {
 	CurrentHP -= Damage;
 	UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
+
+	if (HitMontage)
+	{
+		PlayAnimMontage(HitMontage);
+	}
 }
