@@ -59,19 +59,36 @@ void ACPuppet::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACPuppet::Move);
+
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACPuppet::Look);
+
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ACPuppet::Attack);
+
 		EnhancedInputComponent->BindAction(PowerAttackAction, ETriggerEvent::Started, this, &ACPuppet::Charged);
 		EnhancedInputComponent->BindAction(PowerAttackAction, ETriggerEvent::Completed, this, &ACPuppet::PowerAttack);
+
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACPuppet::DoRun);
-		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &ACPuppet::UnDoRun);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &ACPuppet::ResetWalk);
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Canceled, this, &ACPuppet::Dash);
+
+		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Triggered, this, &ACPuppet::DoGuard);
+		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Completed, this, &ACPuppet::UnDoGuard);
+		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Canceled, this, &ACPuppet::PerfectGuard);
 	}
 
 }
 
 void ACPuppet::Move(const FInputActionValue& Value)
 {
+	if (!GetCanPlayAnimMontage())
+	{
+		if (!bIsGuard)
+		{
+			return;
+		}
+	}
+
+	
 	// 2D Vector of movement values returned from the input action
 	const FVector2D MovementValue = Value.Get<FVector2D>();
 
@@ -155,11 +172,21 @@ void ACPuppet::Charged(const FInputActionValue& Value)
 
 void ACPuppet::DoRun()
 {
+	if (!GetCanPlayAnimMontage())
+	{
+		return;
+	}
+
 	SetCharacterSpeed(600.f);
 }
 
-void ACPuppet::UnDoRun()
+void ACPuppet::ResetWalk()
 {
+	if (!GetCanPlayAnimMontage())
+	{
+		return;
+	}
+
 	SetCharacterSpeed(300.f);
 }
 
@@ -176,6 +203,32 @@ void ACPuppet::Dash()
 	PlayAnimMontage(DashMontage,2.5f);
 
 	//카메라 쭉 늘어나서 천천히 따라가는 코드 추가 필요
+}
+
+void ACPuppet::PerfectGuard()
+{
+	UE_LOG(LogTemp, Warning, TEXT("PerfectGuard"));
+}
+
+void ACPuppet::DoGuard()
+{
+	if (bIsGuard)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("DoGuard"));
+	bIsGuard = true;
+	
+	SetCharacterSpeed(100.f);
+}
+
+void ACPuppet::UnDoGuard()
+{
+	UE_LOG(LogTemp, Warning, TEXT("UnDoGuard"));
+	//약 1.5 초 정도 뒤에
+	bIsGuard = false;
+	ResetWalk();
 }
 
 void ACPuppet::SetCharacterSpeed(float ChangeSpeed)
@@ -216,6 +269,10 @@ bool ACPuppet::GetCanPlayAnimMontage()
 		{
 			return false;
 		}
+		else if (bIsGuard)
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -234,6 +291,15 @@ void ACPuppet::PlayHitAnimMontage()
 
 void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
+	if (bIsGuard)
+	{
+		float GuardDamage = Damage / 2; //일단 2는 50% 뎀감 무기 하드코딩 해둔 것 나중에 무기 만들면 바꿀것
+		CurrentHP -= GuardDamage;
+		UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
+
+		return;
+	}
+
 	if (!GetCanPlayAnimMontage())
 	{
 		return;

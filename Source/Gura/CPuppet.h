@@ -53,6 +53,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> DashAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<class UInputAction> GuardAction;
+
 public:
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);
@@ -74,11 +77,19 @@ public:
 	void DoRun();
 
 	UFUNCTION()
-	void UnDoRun();
+	void ResetWalk();
 
 	UFUNCTION()
 	void Dash();
 
+	UFUNCTION()
+	void PerfectGuard();
+
+	UFUNCTION()
+	void DoGuard();
+
+	UFUNCTION()
+	void UnDoGuard();
 
 	//State
 protected:
@@ -113,10 +124,14 @@ public:
 
 	//Anime
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsRun : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsDash : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bIsGuard : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsComboAttack : 1 = false;
@@ -132,6 +147,8 @@ protected:
 
 public:
 	FORCEINLINE float GetbIsDash() { return bIsDash; }
+
+	FORCEINLINE float GetbIsGuard() { return bIsGuard; }
 
 	FORCEINLINE float GetbIsComboAttack() { return bIsComboAttack; }
 
