@@ -254,6 +254,12 @@ void ACPuppet::EndDash()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
+void ACPuppet::EndImpulse()
+{
+	bIsImpulse = false;
+	GetCapsuleComponent()->SetSimulatePhysics(false);
+}
+
 bool ACPuppet::GetCanPlayAnimMontage()
 {
 	USkeletalMeshComponent* MeshComponent = GetMesh();
@@ -307,6 +313,22 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 
 	CurrentHP -= Damage;
 	UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
+
+	ACharacter* Enemy = Cast<ACharacter>(DamageCauser);
+	if (Enemy)
+	{
+		FVector EnemyLocation = Enemy->GetMesh()->GetComponentLocation();
+		FVector MyLocation = GetMesh()->GetComponentLocation();
+		FVector EnemyDirection = (MyLocation - EnemyLocation).GetSafeNormal();
+		EnemyDirection.Z = 0;
+		EnemyDirection *= 5000;
+
+		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), EnemyDirection.X, EnemyDirection.Y, EnemyDirection.Z);
+
+		bIsImpulse = true;
+		GetCapsuleComponent()->SetSimulatePhysics(true);
+		GetCapsuleComponent()->AddImpulse(EnemyDirection);
+	}
 
 	PlayHitAnimMontage();
 }

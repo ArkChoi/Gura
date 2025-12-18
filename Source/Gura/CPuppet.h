@@ -136,6 +136,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsComboAttack : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bIsImpulse : 1 = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> DashMontage;
 
@@ -155,6 +158,8 @@ public:
 	void ReSetbIsComboAttack();
 
 	void EndDash();
+
+	void EndImpulse();
 
 	bool GetCanPlayAnimMontage();
 
