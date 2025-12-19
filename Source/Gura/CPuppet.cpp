@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimMontage.h"
+#include "Enemy/Mannequin.h"
 
 // Sets default values
 ACPuppet::ACPuppet()
@@ -207,7 +208,32 @@ void ACPuppet::Dash()
 
 void ACPuppet::PerfectGuard()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PerfectGuard"));
+	if (!GetCanPlayAnimMontage())
+	{
+		return;
+	}
+
+	if (PerfectGuardMontage)
+	{
+		PlayAnimMontage(PerfectGuardMontage);
+	}
+
+	FVector TempVector = GetActorLocation();
+	TArray<TEnumAsByte<EObjectTypeQuery>> TempArray;
+	TEnumAsByte<EObjectTypeQuery> Pawn = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn);
+	TempArray.Add(Pawn);
+	TArray<AActor*> IgnoreActor;
+	IgnoreActor.Add(this);
+	FHitResult ResultHit;
+
+	UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), TempVector, TempVector, 100.f, TempArray, false, IgnoreActor, EDrawDebugTrace::ForDuration, ResultHit, true);
+
+	AMannequin* Enemy = Cast<AMannequin>(ResultHit.GetActor());
+	if (Enemy)
+	{
+		bIsPerfectGuard = true;
+	}
+
 }
 
 void ACPuppet::DoGuard()
@@ -217,7 +243,6 @@ void ACPuppet::DoGuard()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("DoGuard"));
 	bIsGuard = true;
 	
 	SetCharacterSpeed(100.f);
@@ -279,6 +304,10 @@ bool ACPuppet::GetCanPlayAnimMontage()
 		{
 			return false;
 		}
+		else if (bIsPerfectGuard)
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -303,6 +332,12 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 		CurrentHP -= GuardDamage;
 		UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
 
+		return;
+	}
+	else if (bIsPerfectGuard)
+	{
+		//ÀÌÆåÆ® ÇÏ³ª ¶ç¾îÁÖ°í..
+		UE_LOG(LogTemp, Warning, TEXT("PerfectGuard"));
 		return;
 	}
 
