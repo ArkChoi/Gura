@@ -75,6 +75,8 @@ void ACPuppet::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Triggered, this, &ACPuppet::DoGuard);
 		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Completed, this, &ACPuppet::UnDoGuard);
 		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Canceled, this, &ACPuppet::PerfectGuard);
+
+		EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Triggered, this, &ACPuppet::OnLockOn);
 	}
 
 }
@@ -254,6 +256,11 @@ void ACPuppet::UnDoGuard()
 	//약 1.5 초 정도 뒤에
 	bIsGuard = false;
 	ResetWalk();
+}
+
+void ACPuppet::OnLockOn()
+{
+	UE_LOG(LogTemp, Warning, TEXT("LockOn"));
 }
 
 void ACPuppet::SetCharacterSpeed(float ChangeSpeed)

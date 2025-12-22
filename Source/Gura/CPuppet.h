@@ -56,6 +56,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> GuardAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<class UInputAction> LockOnAction;
+
 public:
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);
@@ -90,6 +93,9 @@ public:
 
 	UFUNCTION()
 	void UnDoGuard();
+
+	UFUNCTION()
+	void OnLockOn();
 
 	//State
 protected:
