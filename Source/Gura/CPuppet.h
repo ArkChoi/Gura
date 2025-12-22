@@ -171,6 +171,8 @@ public:
 
 	void EndImpulse();
 
+	void ReSetStatus();
+
 	bool GetCanPlayAnimMontage();
 
 	void PlayHitAnimMontage();

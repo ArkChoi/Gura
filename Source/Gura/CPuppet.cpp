@@ -213,7 +213,7 @@ void ACPuppet::PerfectGuard()
 		return;
 	}
 
-	if (PerfectGuardMontage)
+	if (PerfectGuardMontage && !GetMesh()->GetAnimInstance()->Montage_IsPlaying(PerfectGuardMontage))
 	{
 		PlayAnimMontage(PerfectGuardMontage);
 	}
@@ -281,8 +281,15 @@ void ACPuppet::EndDash()
 
 void ACPuppet::EndImpulse()
 {
-	bIsImpulse = false;
 	GetCapsuleComponent()->SetSimulatePhysics(false);
+	bIsImpulse = false;
+}
+
+void ACPuppet::ReSetStatus() //지금 쓰는데가 없는 코드 알아두셈
+{
+	EndDash();
+	ReSetComboCount();
+	EndImpulse();
 }
 
 bool ACPuppet::GetCanPlayAnimMontage()
@@ -310,6 +317,7 @@ bool ACPuppet::GetCanPlayAnimMontage()
 		}
 	}
 
+	ReSetStatus();
 	return true;
 }
 
@@ -319,9 +327,6 @@ void ACPuppet::PlayHitAnimMontage()
 	{
 		PlayAnimMontage(HitMontage);
 	}
-
-	EndDash();
-	ReSetComboCount();
 }
 
 void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
@@ -354,15 +359,15 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 	{
 		FVector EnemyLocation = Enemy->GetMesh()->GetComponentLocation();
 		FVector MyLocation = GetMesh()->GetComponentLocation();
-		FVector EnemyDirection = (MyLocation - EnemyLocation).GetSafeNormal();
-		EnemyDirection.Z = 0;
-		EnemyDirection *= 5000;
+		FVector ImpulseForce = (MyLocation - EnemyLocation).GetSafeNormal();
+		ImpulseForce.Z = 0;
+		ImpulseForce *= 5000;
 
-		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), EnemyDirection.X, EnemyDirection.Y, EnemyDirection.Z);
+		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
 
 		bIsImpulse = true;
 		GetCapsuleComponent()->SetSimulatePhysics(true);
-		GetCapsuleComponent()->AddImpulse(EnemyDirection);
+		GetCapsuleComponent()->AddImpulse(ImpulseForce);
 	}
 
 	PlayHitAnimMontage();
