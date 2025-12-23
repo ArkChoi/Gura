@@ -117,10 +117,6 @@ void ACPuppet::Look(const FInputActionValue& Value)
 
 void ACPuppet::Attack(const FInputActionValue& Value)
 {
-	if (!GetCanPlayAnimMontage())
-	{
-		return;
-	}
 
 	USkeletalMeshComponent* MeshComponent = GetMesh();
 	if (MeshComponent)
@@ -129,7 +125,10 @@ void ACPuppet::Attack(const FInputActionValue& Value)
 ;
 		if (AnimInstance && !AnimInstance->Montage_IsPlaying(AttackMontage))
 		{
-			PlayComboMontage(ComboCount);
+			if (GetCanPlayAnimMontage())
+			{
+				PlayComboMontage(ComboCount);
+			}
 		}
 		else
 		{
@@ -144,9 +143,11 @@ void ACPuppet::PlayComboMontage(int32 InComboCount)
 	{
 		ReSetComboCount();
 		ReSetbIsComboAttack();
+		ReSetbIsAttack();
 		return;
 	}
 
+	bIsAttack = true;
 	FString SectionName = FString::Printf(TEXT("%d"), InComboCount);
 	PlayAnimMontage(AttackMontage, 1.0f, FName(*SectionName));
 	ReSetbIsComboAttack();
@@ -292,11 +293,11 @@ void ACPuppet::EndImpulse()
 	bIsImpulse = false;
 }
 
-void ACPuppet::ReSetStatus() //지금 쓰는데가 없는 코드 알아두셈
+void ACPuppet::ReSetStatus()
 {
 	EndDash();
-	ReSetComboCount();
 	EndImpulse();
+	ReSetComboCount();
 }
 
 bool ACPuppet::GetCanPlayAnimMontage()
@@ -311,6 +312,10 @@ bool ACPuppet::GetCanPlayAnimMontage()
 			return false;
 		}
 		else if (AnimInstance && AnimInstance->Montage_IsPlaying(HitMontage))
+		{
+			return false;
+		}
+		else if (bIsAttack)
 		{
 			return false;
 		}

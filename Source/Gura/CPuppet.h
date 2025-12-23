@@ -148,6 +148,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsPerfectGuard : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bIsAttack : 1 = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> DashMontage;
 
@@ -170,6 +173,10 @@ public:
 	FORCEINLINE float GetbIsPerfectGuard() { return bIsPerfectGuard; }
 
 	FORCEINLINE void ReSetbIsPerfectGuard() { bIsPerfectGuard = false; }
+
+	FORCEINLINE float GetbIsAttack() { return bIsAttack; }
+
+	FORCEINLINE void ReSetbIsAttack() { bIsAttack = false; }
 
 	void ReSetbIsComboAttack();
 
