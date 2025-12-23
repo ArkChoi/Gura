@@ -216,10 +216,12 @@ void ACPuppet::PerfectGuard()
 		return;
 	}
 
-	if (PerfectGuardMontage && !GetMesh()->GetAnimInstance()->Montage_IsPlaying(PerfectGuardMontage))
+	if (!PerfectGuardMontage || GetMesh()->GetAnimInstance()->Montage_IsPlaying(PerfectGuardMontage))
 	{
-		PlayAnimMontage(PerfectGuardMontage);
+		return;
 	}
+
+	PlayAnimMontage(PerfectGuardMontage);
 
 	FVector TempVector = GetActorLocation();
 	TArray<TEnumAsByte<EObjectTypeQuery>> TempArray;
