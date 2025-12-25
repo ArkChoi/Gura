@@ -12,6 +12,7 @@
 #include "Animation/AnimMontage.h"
 #include "Enemy/Mannequin.h"
 
+
 // Sets default values
 ACPuppet::ACPuppet()
 {
@@ -49,6 +50,16 @@ void ACPuppet::Tick(float DeltaTime)
 	if (bIsDash)
 	{
 		AddActorLocalOffset(FVector(4.5f, 0, 0));
+	}
+	if (bIsLockOn)
+	{
+		if (LockEnemy)
+		{
+			FVector ThisLocation = GetActorLocation();
+			FVector LockEnemyLocation = LockEnemy->GetActorLocation();
+
+			GetController()->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(ThisLocation, LockEnemyLocation));
+		}
 	}
 }
 
@@ -264,12 +275,41 @@ void ACPuppet::UnDoGuard()
 
 void ACPuppet::OnLockOn()
 {
+	if (bIsLockOn)
+	{
+		ReSetbIsLockOn();
+		LockEnemy = nullptr;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		return;
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("LockOn"));
 
-	FRotator MeshForwardRotator = GetMesh()->GetForwardVector().Rotation();
-	MeshForwardRotator.Yaw += 90.f;
+	FVector StartVector = Camera->GetComponentTransform().GetTranslation();
+	FVector EndVector = StartVector + ((Camera->GetComponentTransform().GetRotation().GetForwardVector()) * 1000.f);
+	TArray<TEnumAsByte<EObjectTypeQuery>> TempArray;
+	TEnumAsByte<EObjectTypeQuery> Pawn = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn);
+	TempArray.Add(Pawn);
+	TArray<AActor*> IgnoreActor;
+	IgnoreActor.Add(this);
+	FHitResult ResultHit;
 
-	GetController()->SetControlRotation(MeshForwardRotator);
+	UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), StartVector, EndVector, 100.f, TempArray, false, IgnoreActor, EDrawDebugTrace::ForDuration, ResultHit, true);
+
+	AMannequin* Enemy = Cast<AMannequin>(ResultHit.GetActor());
+	if (Enemy)
+	{
+		LockEnemy = Enemy;
+		bIsLockOn = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
+	else
+	{
+		//전방 보기
+		FRotator MeshForwardRotator = GetMesh()->GetForwardVector().Rotation();
+		MeshForwardRotator.Yaw += 90.f;
+		GetController()->SetControlRotation(MeshForwardRotator);
+	}
 }
 
 void ACPuppet::SetCharacterSpeed(float ChangeSpeed)

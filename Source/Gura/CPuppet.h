@@ -59,6 +59,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> LockOnAction;
 
+	TObjectPtr<class AMannequin> LockEnemy;
+
 public:
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);
@@ -151,6 +153,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsAttack : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bIsLockOn : 1 = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> DashMontage;
 
@@ -177,6 +182,10 @@ public:
 	FORCEINLINE float GetbIsAttack() { return bIsAttack; }
 
 	FORCEINLINE void ReSetbIsAttack() { bIsAttack = false; }
+
+	FORCEINLINE float GetbIsLockOn() { return bIsLockOn; }
+
+	FORCEINLINE void ReSetbIsLockOn() { bIsLockOn = false; }
 
 	void ReSetbIsComboAttack();
 
