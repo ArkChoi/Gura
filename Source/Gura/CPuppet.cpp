@@ -113,6 +113,7 @@ void ACPuppet::Look(const FInputActionValue& Value)
 
 	AddControllerPitchInput(LookValue.Y);
 	AddControllerYawInput(LookValue.X);
+
 }
 
 void ACPuppet::Attack(const FInputActionValue& Value)
@@ -264,6 +265,11 @@ void ACPuppet::UnDoGuard()
 void ACPuppet::OnLockOn()
 {
 	UE_LOG(LogTemp, Warning, TEXT("LockOn"));
+
+	FRotator MeshForwardRotator = GetMesh()->GetForwardVector().Rotation();
+	MeshForwardRotator.Yaw += 90.f;
+
+	GetController()->SetControlRotation(MeshForwardRotator);
 }
 
 void ACPuppet::SetCharacterSpeed(float ChangeSpeed)
