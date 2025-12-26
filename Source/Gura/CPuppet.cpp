@@ -21,8 +21,8 @@ ACPuppet::ACPuppet()
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 400.0f;
-	SpringArm->SocketOffset = FVector(0, 0, 0);
+	SpringArm->TargetArmLength = 300.0f;
+	SpringArm->SocketOffset = FVector(0, 0, 100);
 	SpringArm->bDoCollisionTest = false;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -306,9 +306,11 @@ void ACPuppet::OnLockOn()
 	else
 	{
 		//전방 보기
-		FRotator MeshForwardRotator = GetMesh()->GetForwardVector().Rotation();
-		MeshForwardRotator.Yaw += 90.f;
-		GetController()->SetControlRotation(MeshForwardRotator);
+		FRotator ControllerRotator = GetControlRotation();
+		FRotator ForwardRotator = GetMesh()->GetForwardVector().Rotation();
+		ForwardRotator.Yaw += 90.f;
+		ForwardRotator.Roll = ControllerRotator.Roll;
+		GetController()->SetControlRotation(ForwardRotator);
 	}
 }
 
