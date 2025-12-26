@@ -309,6 +309,8 @@ void ACPuppet::OnLockOn()
 		FRotator ControllerRotator = GetControlRotation();
 		FRotator ForwardRotator = GetMesh()->GetForwardVector().Rotation();
 		ForwardRotator.Yaw += 90.f;
+		UE_LOG(LogTemp, Warning, TEXT("%f"), ControllerRotator.Roll);
+
 		ForwardRotator.Roll = ControllerRotator.Roll;
 		GetController()->SetControlRotation(ForwardRotator);
 	}
