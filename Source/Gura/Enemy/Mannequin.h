@@ -34,13 +34,19 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterState")
-	float MaxHP = 100;
+	float MaxHP = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterState")
 	float CurrentHP = MaxHP;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TObjectPtr <class UWidgetComponent> WidgetHP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterState")
+	float MaxGroggy = 100.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterState")
+	float CurrentGroggy = 0;
 
 public:
 	FORCEINLINE float GetCurrentHP() { return CurrentHP; }
@@ -49,10 +55,21 @@ public:
 
 	FORCEINLINE float GetMaxHP() { return MaxHP; }
 
+	FORCEINLINE float GetCurrentGroggy() { return CurrentGroggy; }
+
+	FORCEINLINE void SetCurrentGroggy(float ChangeGroggy) { CurrentGroggy = ChangeGroggy; }
+
+	FORCEINLINE float GetMaxGroggy() { return MaxGroggy; }
+
 public:
 	UFUNCTION()
 	void ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser );
 
 public:
 	void RecoverHP();
+
+	//Anim
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<UAnimMontage> StunMontage;
 };
