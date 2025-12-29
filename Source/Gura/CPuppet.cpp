@@ -65,6 +65,17 @@ void ACPuppet::Tick(float DeltaTime)
 			GetMesh()->SetWorldRotation(LookRotator);
 		}
 	}
+	if (bIsAttackCharge)
+	{
+		if (ChargeAttackMontage)
+		{
+			if (!GetMesh()->GetAnimInstance()->Montage_IsPlaying(ChargeAttackMontage))
+			{
+				PlayAnimMontage(ChargeAttackMontage, 1.f, "Charging");
+			}
+		}
+	}
+
 }
 
 // Called to bind functionality to input
@@ -172,22 +183,37 @@ void ACPuppet::PlayComboMontage(int32 InComboCount)
 
 void ACPuppet::PowerAttack()
 {
+	if (!GetCanPlayAnimMontage())
+	{
+		return;
+	}
+	
 	float NowTime = UGameplayStatics::GetTimeSeconds(this);
 	PowerChargingTime = NowTime - PowerChargingTime;
 
 	if (PowerChargingTime >= 1.5f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PowerChargeAttack"));
+		if (ChargeAttackMontage)
+		{
+			PlayAnimMontage(ChargeAttackMontage, 1.f, "Attack");
+		}
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PowerAttack"));
+		if (ChargeAttackMontage)
+		{
+			PlayAnimMontage(ChargeAttackMontage);
+		}
 	}
 }
 
 void ACPuppet::Charged(const FInputActionValue& Value)
 {
 	PowerChargingTime = UGameplayStatics::GetTimeSeconds(this);
+	bIsAttackCharge = true;
+
 }
 
 void ACPuppet::DoRun()
@@ -383,6 +409,10 @@ bool ACPuppet::GetCanPlayAnimMontage()
 		{
 			return false;
 		}
+		//else if (AnimInstance && AnimInstance->Montage_IsPlaying(ChargeAttackMontage))
+		//{
+		//	return false;
+		//}
 	}
 
 	ReSetStatus();

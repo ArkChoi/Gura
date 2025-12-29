@@ -154,6 +154,9 @@ protected:
 	uint8 bIsAttack : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bIsAttackCharge : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsLockOn : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
@@ -161,6 +164,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<UAnimMontage> ChargeAttackMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> HitMontage;
@@ -182,6 +188,10 @@ public:
 	FORCEINLINE float GetbIsAttack() { return bIsAttack; }
 
 	FORCEINLINE void ReSetbIsAttack() { bIsAttack = false; }
+
+	FORCEINLINE float GetbIsAttackCharge() { return bIsAttackCharge; }
+
+	FORCEINLINE void ReSetbIsAttackCharge() { bIsAttackCharge = false; }
 
 	FORCEINLINE float GetbIsLockOn() { return bIsLockOn; }
 
