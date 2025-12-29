@@ -3,9 +3,9 @@
 
 #include "AnimNotify_ChargeAttack.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "GameFramework/Character.h"
 #include "kismet/GameplayStatics.h"
 #include "../../DamageType/ChargeDamageType.h"
+#include "../../CPuppet.h"
 
 FString UAnimNotify_ChargeAttack::GetNotifyName_Implementation() const
 {
@@ -16,7 +16,7 @@ void UAnimNotify_ChargeAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	ACharacter* Character = Cast<ACharacter>(MeshComp->GetOwner());
+	ACPuppet* Character = Cast<ACPuppet>(MeshComp->GetOwner());
 	if (Character)
 	{
 		FVector TempVector = Character->GetActorLocation();
@@ -33,5 +33,7 @@ void UAnimNotify_ChargeAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 		{
 			UGameplayStatics::ApplyDamage(ResultHit.GetActor(), 20.f, Character->GetController(), Character, UChargeDamageType::StaticClass());
 		}
+
+		Character->ReSetbIsAttackCharge();
 	}
 }

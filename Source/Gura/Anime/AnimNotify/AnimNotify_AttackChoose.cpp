@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+//현재 의미 없는 코드임..
 
 #include "AnimNotify_AttackChoose.h"
 #include "../../CPuppet.h"
