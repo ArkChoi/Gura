@@ -58,7 +58,11 @@ void ACPuppet::Tick(float DeltaTime)
 			FVector ThisLocation = GetActorLocation();
 			FVector LockEnemyLocation = LockEnemy->GetActorLocation();
 
-			GetController()->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(ThisLocation, LockEnemyLocation));
+			FRotator LookRotator = UKismetMathLibrary::FindLookAtRotation(ThisLocation, LockEnemyLocation);
+			GetController()->SetControlRotation(LookRotator);
+
+			LookRotator.Yaw -= 90.f;
+			GetMesh()->SetWorldRotation(LookRotator);
 		}
 	}
 }
@@ -280,6 +284,7 @@ void ACPuppet::OnLockOn()
 		ReSetbIsLockOn();
 		LockEnemy = nullptr;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0));
 		return;
 	}
 
@@ -306,12 +311,11 @@ void ACPuppet::OnLockOn()
 	else
 	{
 		//전방 보기
-		FRotator ControllerRotator = GetControlRotation();
+		FRotator ControllerRotator = GetController()->GetControlRotation();
 		FRotator ForwardRotator = GetMesh()->GetForwardVector().Rotation();
 		ForwardRotator.Yaw += 90.f;
-		UE_LOG(LogTemp, Warning, TEXT("%f"), ControllerRotator.Roll);
 
-		ForwardRotator.Roll = ControllerRotator.Roll;
+		ForwardRotator.Pitch = ControllerRotator.Pitch;
 		GetController()->SetControlRotation(ForwardRotator);
 	}
 }
