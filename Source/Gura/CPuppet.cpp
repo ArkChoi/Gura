@@ -211,6 +211,11 @@ void ACPuppet::PowerAttack()
 
 void ACPuppet::Charged(const FInputActionValue& Value)
 {
+	if (!GetCanPlayAnimMontage())
+	{
+		return;
+	}
+
 	PowerChargingTime = UGameplayStatics::GetTimeSeconds(this);
 	bIsAttackCharge = true;
 
@@ -371,7 +376,7 @@ void ACPuppet::EndDash()
 
 void ACPuppet::EndImpulse()
 {
-	GetCapsuleComponent()->SetSimulatePhysics(false);
+	//GetCapsuleComponent()->SetSimulatePhysics(false);
 	bIsImpulse = false;
 }
 
@@ -380,6 +385,7 @@ void ACPuppet::ReSetStatus()
 	EndDash();
 	EndImpulse();
 	ReSetComboCount();
+	ReSetbIsAttackCharge();
 }
 
 bool ACPuppet::GetCanPlayAnimMontage()
@@ -419,38 +425,30 @@ bool ACPuppet::GetCanPlayAnimMontage()
 	return true;
 }
 
-void ACPuppet::PlayHitAnimMontage()
-{
-	if (HitMontage)
-	{
-		PlayAnimMontage(HitMontage);
-	}
-}
-
 void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (bIsGuard)
-	{
-		float GuardDamage = Damage / 2; //일단 2는 50% 뎀감 무기 하드코딩 해둔 것 나중에 무기 만들면 바꿀것
-		CurrentHP -= GuardDamage;
-		UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
-
-		return;
-	}
-	else if (bIsPerfectGuard)
+	if (bIsPerfectGuard)
 	{
 		//이펙트 하나 띄어주고..
 		UE_LOG(LogTemp, Warning, TEXT("PerfectGuard"));
 		return;
 	}
-
-	if (!GetCanPlayAnimMontage())
+	else if (bIsGuard)
 	{
-		return;
+		float GuardDamage = Damage / 2; //일단 2는 50% 뎀감 무기 하드코딩 해둔 것 나중에 무기 만들면 바꿀것
+		CurrentHP -= GuardDamage;
+		UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
 	}
-
-	CurrentHP -= Damage;
-	UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
+	else
+	{
+		if (!GetCanPlayAnimMontage())
+		{
+			return;
+		}
+		CurrentHP -= Damage;
+		UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
+		PlayAnimMontage(HitMontage);
+	}
 
 	ACharacter* Enemy = Cast<ACharacter>(DamageCauser);
 	if (Enemy)
@@ -459,14 +457,13 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 		FVector MyLocation = GetMesh()->GetComponentLocation();
 		FVector ImpulseForce = (MyLocation - EnemyLocation).GetSafeNormal();
 		ImpulseForce.Z = 0;
-		ImpulseForce *= 5000;
+		ImpulseForce *= 1000;
 
 		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
 
 		bIsImpulse = true;
-		GetCapsuleComponent()->SetSimulatePhysics(true);
-		GetCapsuleComponent()->AddImpulse(ImpulseForce);
+		//GetCapsuleComponent()->SetSimulatePhysics(true);
+		//GetCapsuleComponent()->AddImpulse(ImpulseForce);
+		GetCharacterMovement()->AddImpulse(ImpulseForce, true);
 	}
-
-	PlayHitAnimMontage();
 }
