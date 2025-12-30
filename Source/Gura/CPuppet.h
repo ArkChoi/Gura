@@ -61,6 +61,8 @@ protected:
 
 	TObjectPtr<class AMannequin> LockEnemy;
 
+	FVector2D MovementValue;
+
 public:
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);

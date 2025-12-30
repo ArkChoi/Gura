@@ -46,11 +46,6 @@ void ACPuppet::BeginPlay()
 void ACPuppet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (bIsDash)
-	{
-		AddActorLocalOffset(FVector(4.5f, 0, 0));
-	}
 	if (bIsLockOn)
 	{
 		if (LockEnemy)
@@ -119,7 +114,7 @@ void ACPuppet::Move(const FInputActionValue& Value)
 
 	
 	// 2D Vector of movement values returned from the input action
-	const FVector2D MovementValue = Value.Get<FVector2D>();
+	MovementValue = Value.Get<FVector2D>();
 
 	const FRotator CameraRotation = GetController()->GetControlRotation();
 	const FRotator YawRotation = FRotator(0, CameraRotation.Yaw, 0);
@@ -248,11 +243,41 @@ void ACPuppet::Dash()
 		return;
 	}
 
+	PlayAnimMontage(DashMontage, 2.5f);
 	bIsDash = true;
 
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	PlayAnimMontage(DashMontage,2.5f);
+	const FRotator CameraRotation = GetController()->GetControlRotation();
+	const FRotator YawRotation = FRotator(0, CameraRotation.Yaw, 0);
+	const FRotator YawRollRotation = FRotator(0, CameraRotation.Yaw, CameraRotation.Roll);
 
+	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(YawRotation);
+
+	//Right 구현
+	FVector RightVector = UKismetMathLibrary::GetRightVector(YawRollRotation);
+
+	if (MovementValue.X != 0)
+	{
+		RightVector = RightVector * MovementValue.X * 1000.f;
+		RightVector.Z = 50.f;
+
+		GetCharacterMovement()->AddImpulse(RightVector, true);
+	}
+	else if (MovementValue.Y != 0)
+	{
+		ForwardVector = ForwardVector * MovementValue.Y * 1000.f;
+		ForwardVector.Z = 50.f;
+
+		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ForwardVector.X, ForwardVector.Y, ForwardVector.Z);
+		GetCharacterMovement()->AddImpulse(ForwardVector, true);
+	}
+	else
+	{
+		ForwardVector *= -1000.f;
+		ForwardVector.Z = 50.f;
+
+		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ForwardVector.X, ForwardVector.Y, ForwardVector.Z);
+		GetCharacterMovement()->AddImpulse(ForwardVector, true);
+	}
 	//카메라 쭉 늘어나서 천천히 따라가는 코드 추가 필요
 }
 
@@ -462,7 +487,7 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 		ImpulseForce.Z = 0;
 		ImpulseForce *= ImpulseForceAdder;
 
-		//UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
+		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
 
 		bIsImpulse = true;
 		//GetCapsuleComponent()->SetSimulatePhysics(true);
