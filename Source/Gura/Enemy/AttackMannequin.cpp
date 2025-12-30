@@ -30,5 +30,10 @@ void AAttackMannequin::Tick(float DeltaTime)
 
 void AAttackMannequin::Attack()
 {
+	if (!GetCanPlayAnimMontage())
+	{
+		return;
+	}
+
 	PlayAnimMontage(AttackMontage, 1.0f);
 }

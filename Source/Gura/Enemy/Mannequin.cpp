@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Widget/EnemyHPWidget.h"
+#include "../DamageType/ChargeDamageType.h"
 
 // Sets default values
 AMannequin::AMannequin()
@@ -46,6 +47,7 @@ void AMannequin::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	RecoverHP();
+	RecoverGroggy();
 }
 
 // Called to bind functionality to input
@@ -60,6 +62,13 @@ void AMannequin::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, cons
 	CurrentHP -= Damage;
 	UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
 
+	if (DamageType->IsA<UChargeDamageType>())
+	{
+		CurrentGroggy -= 30.f;
+		GroggyCheack();
+	}
+	UE_LOG(LogTemp, Warning, TEXT("%s Groggy : %f"), *DamagedActor->GetName(), CurrentGroggy);
+
 	OnChangeHP.Broadcast(CurrentHP / MaxHP);
 }
 
@@ -71,5 +80,59 @@ void AMannequin::RecoverHP()
 	}
 
 	CurrentHP += 0.01f;
+}
+
+void AMannequin::RecoverGroggy()
+{
+	if (CurrentGroggy >= MaxHP)
+	{
+		return;
+	}
+
+	CurrentGroggy += 0.01f;
+}
+
+void AMannequin::GroggyCheack()
+{
+	if (!GetCanPlayAnimMontage())
+	{
+		return;
+	}
+
+	if (CurrentGroggy <= 0 && bIsGroggy)
+	{
+		Groggy();
+	}
+	else if (CurrentGroggy <= 0)
+	{
+		CurrentGroggy -= 30.f;
+		bIsGroggy = true;
+		UE_LOG(LogTemp, Warning, TEXT("%s bIsGroggy"), *this->GetName());
+	}
+}
+
+void AMannequin::Groggy()
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s Groggy!"), *this->GetName());
+	if (GroggyMontage)
+	{
+		PlayAnimMontage(GroggyMontage);
+	}
+}
+
+bool AMannequin::GetCanPlayAnimMontage()
+{
+	USkeletalMeshComponent* MeshComponent = GetMesh();
+	if (MeshComponent)
+	{
+		UAnimInstance* AnimInstance = MeshComponent->GetAnimInstance();
+
+		if (AnimInstance && AnimInstance->Montage_IsPlaying(GroggyMontage))
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 

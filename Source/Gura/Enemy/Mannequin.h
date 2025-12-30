@@ -46,7 +46,7 @@ protected:
 	float MaxGroggy = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterState")
-	float CurrentGroggy = 0;
+	float CurrentGroggy = MaxGroggy;
 
 public:
 	FORCEINLINE float GetCurrentHP() { return CurrentHP; }
@@ -68,8 +68,24 @@ public:
 public:
 	void RecoverHP();
 
+	void RecoverGroggy();
+
+	void GroggyCheack();
+
+	void Groggy();
+
 	//Anim
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	TObjectPtr<UAnimMontage> StunMontage;
+	TObjectPtr<UAnimMontage> GroggyMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bIsGroggy : 1 = false;
+
+public:
+	FORCEINLINE float GetbIsGroggy() { return bIsGroggy; }
+
+	FORCEINLINE void ReSetbIsGroggy() { bIsGroggy = false; }
+
+	virtual bool GetCanPlayAnimMontage();
 };
