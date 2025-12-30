@@ -183,7 +183,7 @@ void ACPuppet::PlayComboMontage(int32 InComboCount)
 
 void ACPuppet::PowerAttack()
 {
-	if (!GetCanPlayAnimMontage())
+	if (!GetCanPlayAnimMontage() || !bIsAttackCharge)
 	{
 		return;
 	}
@@ -385,7 +385,6 @@ void ACPuppet::ReSetStatus()
 	EndDash();
 	EndImpulse();
 	ReSetComboCount();
-	ReSetbIsAttackCharge();
 }
 
 bool ACPuppet::GetCanPlayAnimMontage()
@@ -427,6 +426,8 @@ bool ACPuppet::GetCanPlayAnimMontage()
 
 void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
+	float ImpulseForceAdder = 2000.f;
+
 	if (bIsPerfectGuard)
 	{
 		//이펙트 하나 띄어주고..
@@ -436,6 +437,7 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 	else if (bIsGuard)
 	{
 		float GuardDamage = Damage / 2; //일단 2는 50% 뎀감 무기 하드코딩 해둔 것 나중에 무기 만들면 바꿀것
+		ImpulseForceAdder /= 2;
 		CurrentHP -= GuardDamage;
 		UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
 	}
@@ -448,6 +450,7 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 		CurrentHP -= Damage;
 		UE_LOG(LogTemp, Warning, TEXT("%s HP : %f"), *DamagedActor->GetName(), CurrentHP);
 		PlayAnimMontage(HitMontage);
+		ReSetbIsAttackCharge();
 	}
 
 	ACharacter* Enemy = Cast<ACharacter>(DamageCauser);
@@ -457,9 +460,9 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 		FVector MyLocation = GetMesh()->GetComponentLocation();
 		FVector ImpulseForce = (MyLocation - EnemyLocation).GetSafeNormal();
 		ImpulseForce.Z = 0;
-		ImpulseForce *= 1000;
+		ImpulseForce *= ImpulseForceAdder;
 
-		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
+		//UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
 
 		bIsImpulse = true;
 		//GetCapsuleComponent()->SetSimulatePhysics(true);
