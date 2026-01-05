@@ -61,6 +61,7 @@ protected:
 
 	TObjectPtr<class AMannequin> LockEnemy;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", Replicated)
 	FVector2D MovementValue;
 
 public:
@@ -83,11 +84,23 @@ public:
 	UFUNCTION()
 	void DoRun();
 
+	UFUNCTION(Server, Reliable)
+	void C2S_DoRun();
+	void C2S_DoRun_Implementation();
+
 	UFUNCTION()
-	void ResetWalk();
+	void StopRun();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_StopRun();
+	void C2S_StopRun_Implementation();
 
 	UFUNCTION()
 	void Dash();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_Dash();
+	void C2S_Dash_Implementation();
 
 	UFUNCTION()
 	void PerfectGuard();
@@ -212,5 +225,8 @@ public:
 public:
 	UFUNCTION()
 	void ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 };

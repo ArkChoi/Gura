@@ -11,7 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimMontage.h"
 #include "Enemy/Mannequin.h"
-
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ACPuppet::ACPuppet()
@@ -90,7 +90,7 @@ void ACPuppet::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(PowerAttackAction, ETriggerEvent::Completed, this, &ACPuppet::PowerAttack);
 
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACPuppet::DoRun);
-		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &ACPuppet::ResetWalk);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &ACPuppet::StopRun);
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Canceled, this, &ACPuppet::Dash);
 
 		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Triggered, this, &ACPuppet::DoGuard);
@@ -224,15 +224,30 @@ void ACPuppet::DoRun()
 	}
 
 	SetCharacterSpeed(600.f);
+	C2S_DoRun();
 }
 
-void ACPuppet::ResetWalk()
+void ACPuppet::C2S_DoRun_Implementation()
+{
+	bIsRun = true;
+	SetCharacterSpeed(600.f);
+}
+
+void ACPuppet::StopRun()
 {
 	if (!GetCanPlayAnimMontage())
 	{
 		return;
 	}
 
+	SetCharacterSpeed(300.f);
+
+	C2S_StopRun();
+}
+
+void ACPuppet::C2S_StopRun_Implementation()
+{
+	bIsRun = false;
 	SetCharacterSpeed(300.f);
 }
 
@@ -243,6 +258,48 @@ void ACPuppet::Dash()
 		return;
 	}
 
+	PlayAnimMontage(DashMontage, 2.5f);
+	//bIsDash = true;
+
+	//const FRotator CameraRotation = GetController()->GetControlRotation();
+	//const FRotator YawRotation = FRotator(0, CameraRotation.Yaw, 0);
+	//const FRotator YawRollRotation = FRotator(0, CameraRotation.Yaw, CameraRotation.Roll);
+
+	//FVector ForwardVector = UKismetMathLibrary::GetForwardVector(YawRotation);
+
+	////Right 구현
+	//FVector RightVector = UKismetMathLibrary::GetRightVector(YawRollRotation);
+
+	//if (MovementValue.X != 0)
+	//{
+	//	RightVector = RightVector * MovementValue.X * 1000.f;
+	//	RightVector.Z = 50.f;
+
+	//	GetCharacterMovement()->AddImpulse(RightVector, true);
+	//}
+	//else if (MovementValue.Y != 0)
+	//{
+	//	ForwardVector = ForwardVector * MovementValue.Y * 1000.f;
+	//	ForwardVector.Z = 50.f;
+
+	//	UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ForwardVector.X, ForwardVector.Y, ForwardVector.Z);
+	//	GetCharacterMovement()->AddImpulse(ForwardVector, true);
+	//}
+	//else
+	//{
+	//	ForwardVector *= -1000.f;
+	//	ForwardVector.Z = 50.f;
+
+	//	UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ForwardVector.X, ForwardVector.Y, ForwardVector.Z);
+	//	GetCharacterMovement()->AddImpulse(ForwardVector, true);
+	//}
+	//카메라 쭉 늘어나서 천천히 따라가는 코드 추가 필요
+
+	C2S_Dash();
+}
+
+void ACPuppet::C2S_Dash_Implementation()
+{
 	PlayAnimMontage(DashMontage, 2.5f);
 	bIsDash = true;
 
@@ -267,7 +324,7 @@ void ACPuppet::Dash()
 		ForwardVector = ForwardVector * MovementValue.Y * 1000.f;
 		ForwardVector.Z = 50.f;
 
-		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ForwardVector.X, ForwardVector.Y, ForwardVector.Z);
+		//UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ForwardVector.X, ForwardVector.Y, ForwardVector.Z);
 		GetCharacterMovement()->AddImpulse(ForwardVector, true);
 	}
 	else
@@ -275,7 +332,8 @@ void ACPuppet::Dash()
 		ForwardVector *= -1000.f;
 		ForwardVector.Z = 50.f;
 
-		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ForwardVector.X, ForwardVector.Y, ForwardVector.Z);
+		//UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), ForwardVector.X, ForwardVector.Y, ForwardVector.Z);
+		UE_LOG(LogTemp, Warning, TEXT("No Input"));
 		GetCharacterMovement()->AddImpulse(ForwardVector, true);
 	}
 	//카메라 쭉 늘어나서 천천히 따라가는 코드 추가 필요
@@ -330,7 +388,7 @@ void ACPuppet::UnDoGuard()
 	UE_LOG(LogTemp, Warning, TEXT("UnDoGuard"));
 	//약 1.5 초 정도 뒤에
 	bIsGuard = false;
-	ResetWalk();
+	StopRun();
 }
 
 void ACPuppet::OnLockOn()
@@ -341,6 +399,7 @@ void ACPuppet::OnLockOn()
 		LockEnemy = nullptr;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0));
+		SpringArm->SocketOffset = FVector(0, 0, 100);
 		return;
 	}
 
@@ -363,6 +422,7 @@ void ACPuppet::OnLockOn()
 		LockEnemy = Enemy;
 		bIsLockOn = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
+		SpringArm->SocketOffset = FVector(0, 0, 150);
 	}
 	else
 	{
@@ -494,4 +554,11 @@ void ACPuppet::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const 
 		//GetCapsuleComponent()->AddImpulse(ImpulseForce);
 		GetCharacterMovement()->AddImpulse(ImpulseForce, true);
 	}
+}
+
+void ACPuppet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACPuppet, MovementValue);
 }

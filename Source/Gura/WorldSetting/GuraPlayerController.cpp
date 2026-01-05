@@ -14,13 +14,13 @@ void AGuraPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 
-	if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
+	/*if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 		{
 			InputSystem->AddMappingContext(InputMapping, 0);
 		}
-	}
+	}*/
 }
 
 void AGuraPlayerController::OnUnPossess()
@@ -34,4 +34,18 @@ void AGuraPlayerController::OnUnPossess()
 	}
 
 	Super::OnUnPossess();
+}
+
+void AGuraPlayerController::BeginPlay()
+{
+	if (IsLocalController())
+	{
+		if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				InputSystem->AddMappingContext(InputMapping, 0);
+			}
+		}
+	}
 }

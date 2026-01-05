@@ -19,6 +19,7 @@ public:
 
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void OnUnPossess() override;
+	virtual void BeginPlay() override;
 
 public:
 
