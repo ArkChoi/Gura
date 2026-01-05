@@ -90,7 +90,7 @@ void ACPuppet::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(PowerAttackAction, ETriggerEvent::Completed, this, &ACPuppet::PowerAttack);
 
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACPuppet::DoRun);
-		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &ACPuppet::StopRun);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &ACPuppet::ResetWalk);
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Canceled, this, &ACPuppet::Dash);
 
 		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Triggered, this, &ACPuppet::DoGuard);
@@ -233,7 +233,7 @@ void ACPuppet::C2S_DoRun_Implementation()
 	SetCharacterSpeed(600.f);
 }
 
-void ACPuppet::StopRun()
+void ACPuppet::ResetWalk()
 {
 	if (!GetCanPlayAnimMontage())
 	{
@@ -242,10 +242,10 @@ void ACPuppet::StopRun()
 
 	SetCharacterSpeed(300.f);
 
-	C2S_StopRun();
+	C2S_ResetWalk();
 }
 
-void ACPuppet::C2S_StopRun_Implementation()
+void ACPuppet::C2S_ResetWalk_Implementation()
 {
 	bIsRun = false;
 	SetCharacterSpeed(300.f);
@@ -353,6 +353,30 @@ void ACPuppet::PerfectGuard()
 
 	PlayAnimMontage(PerfectGuardMontage);
 
+	/*FVector TempVector = GetActorLocation();
+	TArray<TEnumAsByte<EObjectTypeQuery>> TempArray;
+	TEnumAsByte<EObjectTypeQuery> Pawn = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn);
+	TempArray.Add(Pawn);
+	TArray<AActor*> IgnoreActor;
+	IgnoreActor.Add(this);
+	FHitResult ResultHit;
+
+	UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), TempVector, TempVector, 100.f, TempArray, false, IgnoreActor, EDrawDebugTrace::ForDuration, ResultHit, true);
+
+	AMannequin* Enemy = Cast<AMannequin>(ResultHit.GetActor());
+	if (Enemy)
+	{
+		bIsPerfectGuard = true;
+	}*/
+
+	C2S_PerfectGuard();
+
+}
+
+void ACPuppet::C2S_PerfectGuard_Implementation()
+{
+	PlayAnimMontage(PerfectGuardMontage);
+
 	FVector TempVector = GetActorLocation();
 	TArray<TEnumAsByte<EObjectTypeQuery>> TempArray;
 	TEnumAsByte<EObjectTypeQuery> Pawn = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn);
@@ -368,7 +392,6 @@ void ACPuppet::PerfectGuard()
 	{
 		bIsPerfectGuard = true;
 	}
-
 }
 
 void ACPuppet::DoGuard()
@@ -378,20 +401,84 @@ void ACPuppet::DoGuard()
 		return;
 	}
 
-	bIsGuard = true;
+	//bIsGuard = true;
 	
+	SetCharacterSpeed(100.f);
+
+	C2S_DoGuard();
+}
+
+void ACPuppet::C2S_DoGuard_Implementation()
+{
+	bIsGuard = true;
+
 	SetCharacterSpeed(100.f);
 }
 
 void ACPuppet::UnDoGuard()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UnDoGuard"));
-	//약 1.5 초 정도 뒤에
+	SetCharacterSpeed(300.f);
+	C2S_UnDoGuard();
+}
+
+void ACPuppet::C2S_UnDoGuard_Implementation()
+{
 	bIsGuard = false;
-	StopRun();
+	//약 1.5 초 정도 뒤에
+	SetCharacterSpeed(300.f);
 }
 
 void ACPuppet::OnLockOn()
+{
+	if (bIsLockOn)
+	{
+		ReSetbIsLockOn();
+		//LockEnemy = nullptr;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0));
+		SpringArm->SocketOffset = FVector(0, 0, 100);
+		return;
+	}
+
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	//UE_LOG(LogTemp, Warning, TEXT("LockOn"));
+
+	//FVector StartVector = Camera->GetComponentTransform().GetTranslation();
+	//FVector EndVector = StartVector + ((Camera->GetComponentTransform().GetRotation().GetForwardVector()) * 1000.f);
+	//TArray<TEnumAsByte<EObjectTypeQuery>> TempArray;
+	//TEnumAsByte<EObjectTypeQuery> Pawn = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn);
+	//TempArray.Add(Pawn);
+	//TArray<AActor*> IgnoreActor;
+	//IgnoreActor.Add(this);
+	//FHitResult ResultHit;
+
+	//UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), StartVector, EndVector, 100.f, TempArray, false, IgnoreActor, EDrawDebugTrace::ForDuration, ResultHit, true);
+
+	//AMannequin* Enemy = Cast<AMannequin>(ResultHit.GetActor());
+	//if (Enemy)
+	//{
+	//	LockEnemy = Enemy;
+	//	bIsLockOn = true;
+	//	GetCharacterMovement()->bOrientRotationToMovement = false;
+	//	SpringArm->SocketOffset = FVector(0, 0, 150);
+	//}
+	//else
+	//{
+	//	//전방 보기
+	//	FRotator ControllerRotator = GetController()->GetControlRotation();
+	//	FRotator ForwardRotator = GetMesh()->GetForwardVector().Rotation();
+	//	ForwardRotator.Yaw += 90.f;
+
+	//	ForwardRotator.Pitch = ControllerRotator.Pitch;
+	//	GetController()->SetControlRotation(ForwardRotator);
+	//}
+
+	C2S_OnLockOn();
+}
+
+void ACPuppet::C2S_OnLockOn_Implementation()
 {
 	if (bIsLockOn)
 	{
@@ -560,5 +647,9 @@ void ACPuppet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(ACPuppet, LockEnemy);
 	DOREPLIFETIME(ACPuppet, MovementValue);
+
+	DOREPLIFETIME(ACPuppet, bIsGuard);
+	DOREPLIFETIME(ACPuppet, bIsLockOn);
 }

@@ -59,6 +59,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> LockOnAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", Replicated)
 	TObjectPtr<class AMannequin> LockEnemy;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", Replicated)
@@ -89,11 +90,11 @@ public:
 	void C2S_DoRun_Implementation();
 
 	UFUNCTION()
-	void StopRun();
+	void ResetWalk();
 
 	UFUNCTION(Server, Reliable)
-	void C2S_StopRun();
-	void C2S_StopRun_Implementation();
+	void C2S_ResetWalk();
+	void C2S_ResetWalk_Implementation();
 
 	UFUNCTION()
 	void Dash();
@@ -105,14 +106,30 @@ public:
 	UFUNCTION()
 	void PerfectGuard();
 
+	UFUNCTION(Server, Reliable)
+	void C2S_PerfectGuard();
+	void C2S_PerfectGuard_Implementation();
+
 	UFUNCTION()
 	void DoGuard();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_DoGuard();
+	void C2S_DoGuard_Implementation();
 
 	UFUNCTION()
 	void UnDoGuard();
 
+	UFUNCTION(Server, Reliable)
+	void C2S_UnDoGuard();
+	void C2S_UnDoGuard_Implementation();
+
 	UFUNCTION()
 	void OnLockOn();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_OnLockOn();
+	void C2S_OnLockOn_Implementation();
 
 	//State
 protected:
@@ -153,7 +170,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsDash : 1 = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	uint8 bIsGuard : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
@@ -171,7 +188,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsAttackCharge : 1 = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	uint8 bIsLockOn : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
