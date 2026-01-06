@@ -140,11 +140,34 @@ void ACPuppet::Look(const FInputActionValue& Value)
 void ACPuppet::Attack(const FInputActionValue& Value)
 {
 
-	USkeletalMeshComponent* MeshComponent = GetMesh();
+	/*USkeletalMeshComponent* MeshComponent = GetMesh();
 	if (MeshComponent)
 	{
 		UAnimInstance* AnimInstance = MeshComponent->GetAnimInstance();
 ;
+		if (AnimInstance && !AnimInstance->Montage_IsPlaying(AttackMontage))
+		{
+			if (GetCanPlayAnimMontage())
+			{
+				PlayComboMontage(ComboCount);
+			}
+		}
+		else
+		{
+			bIsComboAttack = true;
+		}
+	}*/
+
+	C2S_Attack();
+}
+
+void ACPuppet::C2S_Attack_Implementation()
+{
+	USkeletalMeshComponent* MeshComponent = GetMesh();
+	if (MeshComponent)
+	{
+		UAnimInstance* AnimInstance = MeshComponent->GetAnimInstance();
+		;
 		if (AnimInstance && !AnimInstance->Montage_IsPlaying(AttackMontage))
 		{
 			if (GetCanPlayAnimMontage())
@@ -161,7 +184,9 @@ void ACPuppet::Attack(const FInputActionValue& Value)
 
 void ACPuppet::PlayComboMontage(int32 InComboCount)
 {
-	if (ComboCount > 3)
+	S2A_PlayComboMontage();
+
+	/*if (ComboCount > 3)
 	{
 		ReSetComboCount();
 		ReSetbIsComboAttack();
@@ -171,6 +196,23 @@ void ACPuppet::PlayComboMontage(int32 InComboCount)
 
 	bIsAttack = true;
 	FString SectionName = FString::Printf(TEXT("%d"), InComboCount);
+	PlayAnimMontage(AttackMontage, 1.0f, FName(*SectionName));
+	ReSetbIsComboAttack();
+	ComboCount++;*/
+}
+
+void ACPuppet::S2A_PlayComboMontage_Implementation()
+{
+	if (ComboCount > 3)
+	{
+		ReSetComboCount();
+		ReSetbIsComboAttack();
+		ReSetbIsAttack();
+		return;
+	}
+
+	bIsAttack = true;
+	FString SectionName = FString::Printf(TEXT("%d"), ComboCount);
 	PlayAnimMontage(AttackMontage, 1.0f, FName(*SectionName));
 	ReSetbIsComboAttack();
 	ComboCount++;
@@ -183,6 +225,36 @@ void ACPuppet::PowerAttack()
 		return;
 	}
 	
+	/*float NowTime = UGameplayStatics::GetTimeSeconds(this);
+	PowerChargingTime = NowTime - PowerChargingTime;
+
+	if (PowerChargingTime >= 1.5f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PowerChargeAttack"));
+		if (ChargeAttackMontage)
+		{
+			PlayAnimMontage(ChargeAttackMontage, 1.f, "Attack");
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PowerAttack"));
+		if (ChargeAttackMontage)
+		{
+			PlayAnimMontage(ChargeAttackMontage);
+		}
+	}*/
+
+	C2S_PowerAttack();
+}
+
+void ACPuppet::C2S_PowerAttack_Implementation()
+{
+	if (!GetCanPlayAnimMontage() || !bIsAttackCharge)
+	{
+		return;
+	}
+
 	float NowTime = UGameplayStatics::GetTimeSeconds(this);
 	PowerChargingTime = NowTime - PowerChargingTime;
 
@@ -211,9 +283,19 @@ void ACPuppet::Charged(const FInputActionValue& Value)
 		return;
 	}
 
+	C2S_Charged();
+
+}
+
+void ACPuppet::C2S_Charged_Implementation()
+{
+	if (!GetCanPlayAnimMontage())
+	{
+		return;
+	}
+
 	PowerChargingTime = UGameplayStatics::GetTimeSeconds(this);
 	bIsAttackCharge = true;
-
 }
 
 void ACPuppet::DoRun()
@@ -650,6 +732,11 @@ void ACPuppet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	DOREPLIFETIME(ACPuppet, LockEnemy);
 	DOREPLIFETIME(ACPuppet, MovementValue);
 
+	DOREPLIFETIME(ACPuppet, ComboCount);
+
 	DOREPLIFETIME(ACPuppet, bIsGuard);
 	DOREPLIFETIME(ACPuppet, bIsLockOn);
+	DOREPLIFETIME(ACPuppet, bIsAttackCharge);
+	DOREPLIFETIME(ACPuppet, bIsComboAttack);
+	DOREPLIFETIME(ACPuppet, bIsAttack);
 }

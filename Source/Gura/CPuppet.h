@@ -75,12 +75,30 @@ public:
 	UFUNCTION()
 	void Attack(const FInputActionValue& Value);
 
+	UFUNCTION(Server, Reliable)
+	void C2S_Attack();
+	void C2S_Attack_Implementation();
+
+	UFUNCTION()
 	void PlayComboMontage(int32 InComboCount);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void S2A_PlayComboMontage();
+	void S2A_PlayComboMontage_Implementation();
 
 	UFUNCTION()
 	void PowerAttack();
 
+	UFUNCTION(Server, Reliable)
+	void C2S_PowerAttack();
+	void C2S_PowerAttack_Implementation();
+
+	UFUNCTION()
 	void Charged(const FInputActionValue& Value);
+
+	UFUNCTION(Server, Reliable)
+	void C2S_Charged();
+	void C2S_Charged_Implementation();
 
 	UFUNCTION()
 	void DoRun();
@@ -144,7 +162,7 @@ protected:
 
 	float PowerChargingTime = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
 	int32 ComboCount = 1;
 
 public:
@@ -173,7 +191,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	uint8 bIsGuard : 1 = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	uint8 bIsComboAttack : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
@@ -182,10 +200,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsPerfectGuard : 1 = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	uint8 bIsAttack : 1 = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	uint8 bIsAttackCharge : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
