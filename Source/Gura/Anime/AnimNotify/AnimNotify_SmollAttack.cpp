@@ -19,6 +19,11 @@ void UAnimNotify_SmollAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 	ACharacter* Character = Cast<ACharacter>(MeshComp->GetOwner());
 	if (Character)
 	{
+		APlayerController* PC = Cast<APlayerController>(Character->GetController());
+		if (!PC || !PC->HasAuthority())
+		{
+			return;
+		}
 		FString TempString = TEXT("hand_r");
 
 		FVector RightHand = Character->GetMesh()->GetBoneLinearVelocity(FName(*TempString));

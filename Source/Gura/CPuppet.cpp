@@ -184,7 +184,7 @@ void ACPuppet::C2S_Attack_Implementation()
 
 void ACPuppet::PlayComboMontage(int32 InComboCount)
 {
-	S2A_PlayComboMontage();
+	C2S_PlayComboMontage();
 
 	/*if (ComboCount > 3)
 	{
@@ -201,7 +201,7 @@ void ACPuppet::PlayComboMontage(int32 InComboCount)
 	ComboCount++;*/
 }
 
-void ACPuppet::S2A_PlayComboMontage_Implementation()
+void ACPuppet::C2S_PlayComboMontage_Implementation()
 {
 	if (ComboCount > 3)
 	{
@@ -210,12 +210,19 @@ void ACPuppet::S2A_PlayComboMontage_Implementation()
 		ReSetbIsAttack();
 		return;
 	}
-
 	bIsAttack = true;
-	FString SectionName = FString::Printf(TEXT("%d"), ComboCount);
-	PlayAnimMontage(AttackMontage, 1.0f, FName(*SectionName));
+
+	S2A_PlayComboMontage();
+
 	ReSetbIsComboAttack();
 	ComboCount++;
+}
+
+void ACPuppet::S2A_PlayComboMontage_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ComboCount : %d "), ComboCount);
+	FString SectionName = FString::Printf(TEXT("%d"), ComboCount);
+	PlayAnimMontage(AttackMontage, 1.0f, FName(*SectionName));
 }
 
 void ACPuppet::PowerAttack()

@@ -82,6 +82,10 @@ public:
 	UFUNCTION()
 	void PlayComboMontage(int32 InComboCount);
 
+	UFUNCTION(Server, Reliable)
+	void C2S_PlayComboMontage();
+	void C2S_PlayComboMontage_Implementation();
+
 	UFUNCTION(NetMulticast, Unreliable)
 	void S2A_PlayComboMontage();
 	void S2A_PlayComboMontage_Implementation();
