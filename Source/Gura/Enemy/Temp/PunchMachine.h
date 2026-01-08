@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "PunchMachine.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FScoreOutput, const int32, InScore);
+
 class UStaticMeshComponent;
 class UPhysicsConstraintComponent;
 class USceneComponent;
@@ -27,6 +29,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+public:
+	FScoreOutput ScoreOutput;
+
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <USceneComponent> Scene;
@@ -39,6 +44,11 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <UPhysicsConstraintComponent> PhysicsConstraint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TObjectPtr <class UWidgetComponent> WidgetScore;
+
+	int32 PowerCharge = 100;
 
 public:
 	UFUNCTION()

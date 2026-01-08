@@ -7,6 +7,8 @@
 #include "Components/SceneComponent.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
+#include "Widget/PowerScoreWidget.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 APunchMachine::APunchMachine()
@@ -29,6 +31,10 @@ APunchMachine::APunchMachine()
 	PhysicsConstraint->ComponentName1.ComponentName = TEXT("Body");
 	PhysicsConstraint->ComponentName2.ComponentName = TEXT("Plane");
 
+	WidgetScore = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetScore"));
+	WidgetScore->SetupAttachment(RootComponent);
+	WidgetScore->SetWidgetSpace(EWidgetSpace::Screen);
+	WidgetScore->SetRelativeLocation(FVector(0, 0, 110.f));
 }
 
 // Called when the game starts or when spawned
@@ -37,6 +43,20 @@ void APunchMachine::BeginPlay()
 	Super::BeginPlay();
 	OnTakeAnyDamage.AddDynamic(this, &APunchMachine::ProcessOnTakeAnyDamage);
 
+	if (WidgetScore)
+	{
+		UPowerScoreWidget* ScoreWidget = Cast<UPowerScoreWidget>(WidgetScore->GetUserWidgetObject());
+		if (ScoreWidget)
+		{
+			ScoreWidget->SetOwner(this);
+			ScoreOutput.AddDynamic(ScoreWidget, &UPowerScoreWidget::ProssesScoreOutput);
+			ScoreWidget->ProssesScoreOutput(0);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WidgetScore Not Found"));
+	}
 }
 
 // Called every frame
@@ -68,6 +88,9 @@ void APunchMachine::S2A_PlayImpulse_Implementation()
 
 	UE_LOG(LogTemp, Warning, TEXT("Local Impulse : %f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
 	Body->AddImpulse(ImpulseForce);
+
+	//일단 하드 코딩
+	ScoreOutput.Broadcast(PowerCharge);
 }
 
 void APunchMachine::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
