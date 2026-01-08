@@ -93,6 +93,10 @@ public:
 	UFUNCTION()
 	void PowerAttack();
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void S2A_PowerAttack();
+	void S2A_PowerAttack_Implementation();
+
 	UFUNCTION(Server, Reliable)
 	void C2S_PowerAttack();
 	void C2S_PowerAttack_Implementation();

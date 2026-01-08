@@ -8,6 +8,7 @@
 
 class UStaticMeshComponent;
 class UPhysicsConstraintComponent;
+class USceneComponent;
 
 UCLASS()
 class GURA_API APunchMachine : public AActor
@@ -28,6 +29,9 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
+	TObjectPtr <USceneComponent> Scene;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <UStaticMeshComponent> Plane;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
@@ -40,4 +44,14 @@ public:
 	UFUNCTION()
 	void ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void S2A_PlayImpulse();
+	void S2A_PlayImpulse_Implementation();
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
+	FVector ImpulseForce;
+
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

@@ -255,8 +255,15 @@ void ACPuppet::PowerAttack()
 	C2S_PowerAttack();
 }
 
+void ACPuppet::S2A_PowerAttack_Implementation()
+{
+	PlayAnimMontage(ChargeAttackMontage);
+}
+
 void ACPuppet::C2S_PowerAttack_Implementation()
 {
+	S2A_PowerAttack();
+
 	if (!GetCanPlayAnimMontage() || !bIsAttackCharge)
 	{
 		return;
@@ -270,7 +277,7 @@ void ACPuppet::C2S_PowerAttack_Implementation()
 		UE_LOG(LogTemp, Warning, TEXT("PowerChargeAttack"));
 		if (ChargeAttackMontage)
 		{
-			PlayAnimMontage(ChargeAttackMontage, 1.f, "Attack");
+			S2A_PowerAttack();
 		}
 	}
 	else
@@ -278,7 +285,7 @@ void ACPuppet::C2S_PowerAttack_Implementation()
 		UE_LOG(LogTemp, Warning, TEXT("PowerAttack"));
 		if (ChargeAttackMontage)
 		{
-			PlayAnimMontage(ChargeAttackMontage);
+			S2A_PowerAttack();
 		}
 	}
 }

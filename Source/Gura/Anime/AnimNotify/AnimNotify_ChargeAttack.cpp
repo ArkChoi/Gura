@@ -19,6 +19,12 @@ void UAnimNotify_ChargeAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 	ACPuppet* Character = Cast<ACPuppet>(MeshComp->GetOwner());
 	if (Character)
 	{
+		APlayerController* PC = Cast<APlayerController>(Character->GetController());
+		if (!PC || !PC->HasAuthority())
+		{
+			return;
+		}
+
 		FVector TempVector = Character->GetActorLocation();
 		TArray<TEnumAsByte<EObjectTypeQuery>> TempArray;
 		TEnumAsByte<EObjectTypeQuery> Pawn = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn);
