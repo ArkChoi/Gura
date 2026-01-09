@@ -4,22 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "PowerScoreWidget.generated.h"
+#include "PowerChargeGaugeWidget.generated.h"
 
-class UTextBlock;
-class AActor;
-
+class UProgressBar;
 /**
  * 
  */
 UCLASS()
-class GURA_API UPowerScoreWidget : public UUserWidget
+class GURA_API UPowerChargeGaugeWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component", meta = (BindWidget))
-	TObjectPtr<UTextBlock> Score;
+	TObjectPtr<UProgressBar> Gauge;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Owner")
 	TObjectPtr<AActor> Owner;
@@ -33,7 +31,5 @@ public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
-	void ProssesScoreOutput(int32 InScore);
-
-
+	void ProssesChargeGauge(int32 InGauge);
 };

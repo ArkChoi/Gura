@@ -12,6 +12,8 @@
 #include "Animation/AnimMontage.h"
 #include "Enemy/Mannequin.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/WidgetComponent.h"
+#include "Enemy/Temp/Widget/PowerChargeGaugeWidget.h"
 
 // Sets default values
 ACPuppet::ACPuppet()
@@ -31,6 +33,12 @@ ACPuppet::ACPuppet()
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight()));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0));
 
+	WidgetChargeGauge = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetChargeGauge"));
+	WidgetChargeGauge->SetupAttachment(RootComponent);
+	//WidgetChargeGauge->SetWidgetSpace(EWidgetSpace::Screen);
+	WidgetChargeGauge->SetRelativeLocation(FVector(0, 320.f, -90.f));
+	WidgetChargeGauge->SetRelativeRotation(FRotator(360.f, 0, 180.f));
+
 	SetCharacterSpeed(CharacterSpeed);
 }
 
@@ -40,6 +48,21 @@ void ACPuppet::BeginPlay()
 	Super::BeginPlay();
 	
 	OnTakeAnyDamage.AddDynamic(this, &ACPuppet::ProcessOnTakeAnyDamage);
+
+	if (WidgetChargeGauge)
+	{
+		UPowerChargeGaugeWidget* Widget = Cast<UPowerChargeGaugeWidget>(WidgetChargeGauge->GetUserWidgetObject());
+		if (Widget)
+		{
+			Widget->SetOwner(this);
+			ChargeGauge.AddDynamic(Widget, &UPowerChargeGaugeWidget::ProssesChargeGauge);
+			Widget->ProssesChargeGauge(MaxChargeGauge / CurrentChargeGauge);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WidgetScore Not Found"));
+	}
 }
 
 // Called every frame
@@ -67,6 +90,11 @@ void ACPuppet::Tick(float DeltaTime)
 			if (!GetMesh()->GetAnimInstance()->Montage_IsPlaying(ChargeAttackMontage))
 			{
 				PlayAnimMontage(ChargeAttackMontage, 1.f, "Charging");
+				if (CurrentChargeGauge <= MaxChargeGauge)
+				{
+					CurrentChargeGauge += 0.1f;
+					ChargeGauge.Broadcast(CurrentChargeGauge / MaxChargeGauge);
+				}
 			}
 		}
 	}
@@ -746,6 +774,7 @@ void ACPuppet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	DOREPLIFETIME(ACPuppet, LockEnemy);
 	DOREPLIFETIME(ACPuppet, MovementValue);
 
+	DOREPLIFETIME(ACPuppet, CurrentChargeGauge);
 	DOREPLIFETIME(ACPuppet, ComboCount);
 
 	DOREPLIFETIME(ACPuppet, bIsGuard);

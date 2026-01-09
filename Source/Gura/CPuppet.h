@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "CPuppet.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeGauge, const int32, InGauge);
+
 struct FInputActionValue;
 
 class UAnimMontage;
@@ -30,6 +32,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	FChargeGauge ChargeGauge;
+
 	//Base And Movement
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
@@ -37,6 +42,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <class UCameraComponent> Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TObjectPtr <class UWidgetComponent> WidgetChargeGauge;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> MoveAction;
@@ -170,6 +178,12 @@ protected:
 
 	float PowerChargingTime = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	float MaxChargeGauge = 100.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
+	float CurrentChargeGauge = 0;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
 	int32 ComboCount = 1;
 
@@ -183,6 +197,12 @@ public:
 	FORCEINLINE void SetCurrentHP(float ChangeHP) { CurrentHP = ChangeHP; }
 
 	FORCEINLINE float GetMaxHP() { return MaxHP; }
+
+	FORCEINLINE float GetMaxChargeGauge() { return MaxChargeGauge; }
+
+	FORCEINLINE float GetCurrentChargeGauge() { return CurrentChargeGauge; }
+
+	FORCEINLINE void SetCurrentChargeGauge(float InCurrentChargeGauge) { CurrentChargeGauge = InCurrentChargeGauge; }
 
 	void ReSetComboCount();
 

@@ -4,7 +4,7 @@
 #include "PowerScoreWidget.h"
 #include "Components/TextBlock.h"
 
-void UPowerScoreWidget::NativeOnInitialized()
+void UPowerScoreWidget::NativeConstruct()
 {
 	SetVisibility(ESlateVisibility::Hidden);
 }
