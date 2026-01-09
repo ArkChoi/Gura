@@ -30,7 +30,10 @@ public:
 	FORCEINLINE void SetOwner(AActor* InOwner) { Owner = InOwner; }
 
 public:
+	virtual void NativeOnInitialized() override;
+
 	UFUNCTION(BlueprintCallable)
 	void ProssesScoreOutput(int32 InScore);
+
 
 };

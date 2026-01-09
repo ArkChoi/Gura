@@ -4,7 +4,13 @@
 #include "PowerScoreWidget.h"
 #include "Components/TextBlock.h"
 
+void UPowerScoreWidget::NativeOnInitialized()
+{
+	SetVisibility(ESlateVisibility::Hidden);
+}
+
 void UPowerScoreWidget::ProssesScoreOutput(int32 InScore)
 {
+	SetVisibility(ESlateVisibility::Visible);
 	Score->SetText(FText::AsNumber(InScore));
 }
