@@ -31,5 +31,7 @@ public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
-	void ProssesChargeGauge(int32 InGauge);
+	void ProssesChargeGauge(float InGauge);
+
+	void ReSetWidget();
 };

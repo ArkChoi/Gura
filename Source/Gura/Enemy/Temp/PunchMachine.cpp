@@ -75,9 +75,21 @@ void APunchMachine::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, c
 		FVector MyLocation = Body->GetComponentLocation();
 		ImpulseForce = (MyLocation - EnemyLocation).GetSafeNormal();
 		ImpulseForce.Z = 0;
-		ImpulseForce *= 100000.f;
+		PowerCharge = Damage;
+		if (PowerCharge >= 70)
+		{
+			ImpulseForce *= 100000.f;
+		}
+		else if (PowerCharge >= 40)
+		{
+			ImpulseForce *= 10000.f;
+		}
+		else
+		{
+			ImpulseForce *= 1000.f;
+		}
 
-		UE_LOG(LogTemp, Warning, TEXT("Server : %f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
+		//UE_LOG(LogTemp, Warning, TEXT("Server : %f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
 	}
 
 	S2A_PlayImpulse();
@@ -86,7 +98,7 @@ void APunchMachine::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, c
 void APunchMachine::S2A_PlayImpulse_Implementation()
 {
 
-	UE_LOG(LogTemp, Warning, TEXT("Local Impulse : %f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
+	UE_LOG(LogTemp, Warning, TEXT("PowerCharge : %d"), PowerCharge);
 	Body->AddImpulse(ImpulseForce);
 
 	//일단 하드 코딩

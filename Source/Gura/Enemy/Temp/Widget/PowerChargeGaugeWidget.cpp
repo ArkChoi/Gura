@@ -9,15 +9,19 @@ void UPowerChargeGaugeWidget::NativeConstruct()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UPowerChargeGaugeWidget::ProssesChargeGauge(int32 InGauge)
+void UPowerChargeGaugeWidget::ProssesChargeGauge(float InGauge)
 {
 	if (Gauge)
-	{
+	{ 
 		SetVisibility(ESlateVisibility::Visible);
 		Gauge->SetPercent(InGauge);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Not Found Gauge"));
+	}
+	if (InGauge == 0)
+	{
+		SetVisibility(ESlateVisibility::Hidden);
 	}
 }

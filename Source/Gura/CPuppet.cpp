@@ -92,7 +92,23 @@ void ACPuppet::Tick(float DeltaTime)
 				PlayAnimMontage(ChargeAttackMontage, 1.f, "Charging");
 				if (CurrentChargeGauge <= MaxChargeGauge)
 				{
-					CurrentChargeGauge += 0.1f;
+					if (bIsChargeGaugeUp)
+					{
+						CurrentChargeGauge += 10.f;
+						if (CurrentChargeGauge >= 100.f)
+						{
+							bIsChargeGaugeUp = false;
+						}
+					}
+					else
+					{
+						CurrentChargeGauge -= 10.f;
+						if (CurrentChargeGauge <= 10.f)
+						{
+							bIsChargeGaugeUp = true;
+						}
+					}
+					UE_LOG(LogTemp, Warning, TEXT("CurrentChargeGauge : %f "), CurrentChargeGauge);
 					ChargeGauge.Broadcast(CurrentChargeGauge / MaxChargeGauge);
 				}
 			}
@@ -656,6 +672,19 @@ void ACPuppet::SetCharacterSpeed(float ChangeSpeed)
 void ACPuppet::ReSetComboCount()
 {
 	ComboCount = 1;
+}
+
+void ACPuppet::ArcadeChargeReset()
+{
+	S2A_ArcadeChargeReset();
+}
+
+void ACPuppet::S2A_ArcadeChargeReset_Implementation()
+{
+	CurrentChargeGauge = 0;
+	bIsChargeGaugeUp = true;
+
+	ChargeGauge.Broadcast(0);
 }
 
 void ACPuppet::ReSetbIsComboAttack()

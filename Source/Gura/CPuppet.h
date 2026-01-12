@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "CPuppet.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeGauge, const int32, InGauge);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeGauge, const float, InGauge);
 
 struct FInputActionValue;
 
@@ -184,6 +184,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
 	float CurrentChargeGauge = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	uint8 bIsChargeGaugeUp : 1 = true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
 	int32 ComboCount = 1;
 
@@ -207,6 +210,12 @@ public:
 	void ReSetComboCount();
 
 	FORCEINLINE int32 GetComboCount() { return ComboCount; }
+
+	void ArcadeChargeReset();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void S2A_ArcadeChargeReset();
+	void S2A_ArcadeChargeReset_Implementation();
 
 	//Anime
 protected:
