@@ -14,6 +14,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/WidgetComponent.h"
 #include "Enemy/Temp/Widget/PowerChargeGaugeWidget.h"
+#include "Components/ChildActorComponent.h"
+#include "Weapon/WeaponBase.h"
 
 // Sets default values
 ACPuppet::ACPuppet()
@@ -38,6 +40,9 @@ ACPuppet::ACPuppet()
 	//WidgetChargeGauge->SetWidgetSpace(EWidgetSpace::Screen);
 	WidgetChargeGauge->SetRelativeLocation(FVector(0, 320.f, -90.f));
 	WidgetChargeGauge->SetRelativeRotation(FRotator(360.f, 0, 180.f));
+
+	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+	Weapon->SetupAttachment(GetMesh());
 
 	SetCharacterSpeed(CharacterSpeed);
 }
@@ -113,6 +118,12 @@ void ACPuppet::Tick(float DeltaTime)
 				}
 			}
 		}
+
+		/*AWeaponBase* WeaponBase = Cast<AWeaponBase>(Weapon);
+		if (WeaponBase)
+		{
+			WeaponBase->PlayChargeAttack();
+		}*/
 	}
 
 }
@@ -207,6 +218,11 @@ void ACPuppet::Attack(const FInputActionValue& Value)
 
 void ACPuppet::C2S_Attack_Implementation()
 {
+	if (bIsSafe)
+	{
+		return;
+	}
+
 	USkeletalMeshComponent* MeshComponent = GetMesh();
 	if (MeshComponent)
 	{
@@ -347,6 +363,11 @@ void ACPuppet::Charged(const FInputActionValue& Value)
 
 void ACPuppet::C2S_Charged_Implementation()
 {
+	if (bIsSafe)
+	{
+		return;
+	}
+
 	if (!GetCanPlayAnimMontage())
 	{
 		return;
@@ -687,6 +708,11 @@ void ACPuppet::S2A_ArcadeChargeReset_Implementation()
 	ChargeGauge.Broadcast(0);
 }
 
+void ACPuppet::C2S_ChangebIsSafe_Implementation()
+{
+	bIsSafe = !bIsSafe;
+}
+
 void ACPuppet::ReSetbIsComboAttack()
 {
 	bIsComboAttack = false;
@@ -811,4 +837,5 @@ void ACPuppet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	DOREPLIFETIME(ACPuppet, bIsAttackCharge);
 	DOREPLIFETIME(ACPuppet, bIsComboAttack);
 	DOREPLIFETIME(ACPuppet, bIsAttack);
+	DOREPLIFETIME(ACPuppet, bIsSafe);
 }

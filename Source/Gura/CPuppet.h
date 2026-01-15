@@ -12,6 +12,15 @@ struct FInputActionValue;
 
 class UAnimMontage;
 
+//UENUM(BlueprintType)
+//enum class EPuppetState : uint8
+//{
+//	Normal = 0 UMETA(DisplayName = "Safe"),
+//	Chase = 1 UMETA(DisplayName = "Battle"),
+//	Battle = 2 UMETA(DisplayName = "Punche"),
+//	Death = 3 UMETA(DisplayName = "Trench")
+//};
+
 UCLASS()
 class GURA_API ACPuppet : public ACharacter
 {
@@ -42,6 +51,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <class UCameraComponent> Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UChildActorComponent> Weapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TObjectPtr <class UWidgetComponent> WidgetChargeGauge;
@@ -246,20 +258,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	uint8 bIsLockOn : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
+	uint8 bIsSafe : 1 = true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> DashMontage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	TObjectPtr<UAnimMontage> AttackMontage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	TObjectPtr<UAnimMontage> ChargeAttackMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> HitMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> PerfectGuardMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<UAnimMontage> ChargeAttackMontage;
 
 public:
 	FORCEINLINE float GetbIsDash() { return bIsDash; }
@@ -283,6 +298,15 @@ public:
 	FORCEINLINE float GetbIsLockOn() { return bIsLockOn; }
 
 	FORCEINLINE void ReSetbIsLockOn() { bIsLockOn = false; }
+
+	FORCEINLINE float GetbIsSafe() { return bIsSafe; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void ChangebIsSafe() { C2S_ChangebIsSafe(); }
+
+	UFUNCTION(Server, Reliable)
+	void C2S_ChangebIsSafe();
+	void C2S_ChangebIsSafe_Implementation();
 
 	void ReSetbIsComboAttack();
 
