@@ -35,11 +35,11 @@ ACPuppet::ACPuppet()
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight()));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0));
 
-	WidgetChargeGauge = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetChargeGauge"));
-	WidgetChargeGauge->SetupAttachment(RootComponent);
+	//WidgetChargeGauge = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetChargeGauge"));
+	//WidgetChargeGauge->SetupAttachment(RootComponent);
 	//WidgetChargeGauge->SetWidgetSpace(EWidgetSpace::Screen);
-	WidgetChargeGauge->SetRelativeLocation(FVector(0, 320.f, -90.f));
-	WidgetChargeGauge->SetRelativeRotation(FRotator(360.f, 0, 180.f));
+	//WidgetChargeGauge->SetRelativeLocation(FVector(0, 320.f, -90.f));
+	//WidgetChargeGauge->SetRelativeRotation(FRotator(360.f, 0, 180.f));
 
 	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	Weapon->SetupAttachment(GetMesh());
@@ -54,7 +54,7 @@ void ACPuppet::BeginPlay()
 	
 	OnTakeAnyDamage.AddDynamic(this, &ACPuppet::ProcessOnTakeAnyDamage);
 
-	if (WidgetChargeGauge)
+	/*if (WidgetChargeGauge)
 	{
 		UPowerChargeGaugeWidget* Widget = Cast<UPowerChargeGaugeWidget>(WidgetChargeGauge->GetUserWidgetObject());
 		if (Widget)
@@ -67,7 +67,7 @@ void ACPuppet::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("WidgetScore Not Found"));
-	}
+	}*/
 }
 
 // Called every frame

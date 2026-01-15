@@ -110,4 +110,7 @@ void APunchMachine::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APunchMachine, ImpulseForce);
+	DOREPLIFETIME(APunchMachine, PowerCharge);
+	DOREPLIFETIME(APunchMachine, HighScore);
+
 }

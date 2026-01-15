@@ -3,10 +3,21 @@
 
 #include "PowerChargeGaugeWidget.h"
 #include "Components/ProgressBar.h"
+#include "../../../WorldSetting/GuraPlayerController.h"
+#include "../../../CPuppet.h"
 
 void UPowerChargeGaugeWidget::NativeConstruct()
 {
-	SetVisibility(ESlateVisibility::Hidden);
+	//SetVisibility(ESlateVisibility::Hidden);
+	AGuraPlayerController* PC = Cast<AGuraPlayerController>(GetOwningPlayer());
+	if (PC)
+	{
+		ACPuppet* Player = Cast<ACPuppet>(PC->GetPawn());
+		if (Player)
+		{
+			Player->ChargeGauge.AddDynamic(this, &UPowerChargeGaugeWidget::ProssesChargeGauge);
+		}
+	}
 }
 
 void UPowerChargeGaugeWidget::ProssesChargeGauge(float InGauge)

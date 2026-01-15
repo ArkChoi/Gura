@@ -48,7 +48,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TObjectPtr <class UWidgetComponent> WidgetScore;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
 	int32 PowerCharge = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
+	int32 HighScore = 100;
 
 public:
 	UFUNCTION()

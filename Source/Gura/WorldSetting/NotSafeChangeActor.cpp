@@ -32,11 +32,17 @@ void ANotSafeChangeActor::Tick(float DeltaTime)
 
 void ANotSafeChangeActor::ProcessOnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *OtherActor->GetName());
-
 	ACPuppet* Player = Cast<ACPuppet>(OtherActor);
 	if (Player && Player->GetbIsSafe())
 	{
+		APlayerController* PC = Cast<APlayerController>(Player->GetController());
+		if (!PC || !PC->HasAuthority())
+		{
+			return;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *OtherActor->GetName());
+
 		Player->ChangebIsSafe();
 	}
 }

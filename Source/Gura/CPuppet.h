@@ -55,8 +55,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UChildActorComponent> Weapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TObjectPtr <class UWidgetComponent> WidgetChargeGauge;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	//TObjectPtr <class UWidgetComponent> WidgetChargeGauge;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> MoveAction;
