@@ -7,6 +7,7 @@
 #include "PunchMachine.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FScoreOutput, const int32, InScore);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHighScore, const int32, InHighScore);
 
 class UStaticMeshComponent;
 class UPhysicsConstraintComponent;
@@ -31,6 +32,7 @@ public:
 
 public:
 	FScoreOutput ScoreOutput;
+	FHighScore HighScoreChange;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
@@ -52,7 +54,7 @@ protected:
 	int32 PowerCharge = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
-	int32 HighScore = 100;
+	int32 HighScore = 0;
 
 public:
 	UFUNCTION()

@@ -90,6 +90,10 @@ void APunchMachine::ProcessOnTakeAnyDamage(AActor* DamagedActor, float Damage, c
 		}
 
 		//UE_LOG(LogTemp, Warning, TEXT("Server : %f %f %f"), ImpulseForce.X, ImpulseForce.Y, ImpulseForce.Z);
+		if (PowerCharge > HighScore)
+		{
+			HighScore = PowerCharge;
+		}
 	}
 
 	S2A_PlayImpulse();
@@ -103,6 +107,8 @@ void APunchMachine::S2A_PlayImpulse_Implementation()
 
 	//일단 하드 코딩
 	ScoreOutput.Broadcast(PowerCharge);
+
+	HighScoreChange.Broadcast(HighScore);
 }
 
 void APunchMachine::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
