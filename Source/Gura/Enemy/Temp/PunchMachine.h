@@ -47,8 +47,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <UPhysicsConstraintComponent> PhysicsConstraint;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TObjectPtr <class UWidgetComponent> WidgetScore;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	//TObjectPtr <class UWidgetComponent> WidgetScore;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
 	int32 PowerCharge = 100;
@@ -63,6 +63,8 @@ public:
 	UFUNCTION(NetMulticast, Unreliable)
 	void S2A_PlayImpulse();
 	void S2A_PlayImpulse_Implementation();
+
+	FORCEINLINE int32 GetHighScore() { return HighScore; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)

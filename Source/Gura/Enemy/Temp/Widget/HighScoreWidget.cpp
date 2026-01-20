@@ -19,6 +19,8 @@ void UHighScoreWidget::NativeConstruct()
 		{
 			Machine->HighScoreChange.AddDynamic(this, &UHighScoreWidget::ProssesHighScoreOutput);
 		}
+
+		Score->SetText(FText::AsNumber(Machine->GetHighScore()));
 	}
 }
 

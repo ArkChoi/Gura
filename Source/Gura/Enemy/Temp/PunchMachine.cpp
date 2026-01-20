@@ -31,10 +31,10 @@ APunchMachine::APunchMachine()
 	PhysicsConstraint->ComponentName1.ComponentName = TEXT("Body");
 	PhysicsConstraint->ComponentName2.ComponentName = TEXT("Plane");
 
-	WidgetScore = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetScore"));
-	WidgetScore->SetupAttachment(RootComponent);
-	WidgetScore->SetWidgetSpace(EWidgetSpace::Screen);
-	WidgetScore->SetRelativeLocation(FVector(0, 0, 110.f));
+	//WidgetScore = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetScore"));
+	//WidgetScore->SetupAttachment(RootComponent);
+	//WidgetScore->SetWidgetSpace(EWidgetSpace::Screen);
+	//WidgetScore->SetRelativeLocation(FVector(0, 0, 110.f));
 }
 
 // Called when the game starts or when spawned
@@ -43,7 +43,7 @@ void APunchMachine::BeginPlay()
 	Super::BeginPlay();
 	OnTakeAnyDamage.AddDynamic(this, &APunchMachine::ProcessOnTakeAnyDamage);
 
-	if (WidgetScore)
+	/*if (WidgetScore)
 	{
 		UPowerScoreWidget* ScoreWidget = Cast<UPowerScoreWidget>(WidgetScore->GetUserWidgetObject());
 		if (ScoreWidget)
@@ -56,7 +56,7 @@ void APunchMachine::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("WidgetScore Not Found"));
-	}
+	}*/
 }
 
 // Called every frame
