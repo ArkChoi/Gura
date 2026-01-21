@@ -259,7 +259,7 @@ protected:
 	uint8 bIsLockOn : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
-	uint8 bIsSafe : 1 = true;
+	uint8 bIsSafe : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<UAnimMontage> DashMontage;

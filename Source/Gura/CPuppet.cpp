@@ -13,7 +13,7 @@
 #include "Enemy/Mannequin.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/WidgetComponent.h"
-#include "Enemy/Temp/Widget/PowerChargeGaugeWidget.h"
+//#include "Enemy/Temp/Widget/PowerChargeGaugeWidget.h"
 #include "Components/ChildActorComponent.h"
 #include "Weapon/WeaponBase.h"
 
@@ -95,28 +95,34 @@ void ACPuppet::Tick(float DeltaTime)
 			if (!GetMesh()->GetAnimInstance()->Montage_IsPlaying(ChargeAttackMontage))
 			{
 				PlayAnimMontage(ChargeAttackMontage, 1.f, "Charging");
-				if (CurrentChargeGauge <= MaxChargeGauge)
-				{
-					if (bIsChargeGaugeUp)
-					{
-						CurrentChargeGauge += 10.f;
-						if (CurrentChargeGauge >= 100.f)
-						{
-							bIsChargeGaugeUp = false;
-						}
-					}
-					else
-					{
-						CurrentChargeGauge -= 10.f;
-						if (CurrentChargeGauge <= 10.f)
-						{
-							bIsChargeGaugeUp = true;
-						}
-					}
-					UE_LOG(LogTemp, Warning, TEXT("CurrentChargeGauge : %f "), CurrentChargeGauge);
-					ChargeGauge.Broadcast(CurrentChargeGauge / MaxChargeGauge);
-				}
 			}
+
+			//아케이드용 차지어택 주석처리
+			//if (!GetMesh()->GetAnimInstance()->Montage_IsPlaying(ChargeAttackMontage))
+			//{
+			//	PlayAnimMontage(ChargeAttackMontage, 1.f, "Charging");
+			//	if (CurrentChargeGauge <= MaxChargeGauge)
+			//	{
+			//		if (bIsChargeGaugeUp)
+			//		{
+			//			CurrentChargeGauge += 10.f;
+			//			if (CurrentChargeGauge >= 100.f)
+			//			{
+			//				bIsChargeGaugeUp = false;
+			//			}
+			//		}
+			//		else
+			//		{
+			//			CurrentChargeGauge -= 10.f;
+			//			if (CurrentChargeGauge <= 10.f)
+			//			{
+			//				bIsChargeGaugeUp = true;
+			//			}
+			//		}
+			//		UE_LOG(LogTemp, Warning, TEXT("CurrentChargeGauge : %f "), CurrentChargeGauge);
+			//		ChargeGauge.Broadcast(CurrentChargeGauge / MaxChargeGauge);
+			//	}
+			//}
 		}
 
 		/*AWeaponBase* WeaponBase = Cast<AWeaponBase>(Weapon);
@@ -373,7 +379,8 @@ void ACPuppet::C2S_Charged_Implementation()
 		return;
 	}
 
-	PowerChargingTime = UGameplayStatics::GetTimeSeconds(this);
+	//아케이드 차지용 코드 주석
+	//PowerChargingTime = UGameplayStatics::GetTimeSeconds(this);
 	bIsAttackCharge = true;
 }
 

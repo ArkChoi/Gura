@@ -35,11 +35,25 @@ void AWeaponBase::Tick(float DeltaTime)
 
 void AWeaponBase::PlayAttack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PlayAttack"));
+	if (AttackMontage)
+	{
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayAttack"));
+	}
 }
 
 void AWeaponBase::PlayChargeAttack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PlayChargeAttack"));
+	if (ChargeAttackMontage)
+	{
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayChargeAttack"));
+	}
 }
 
