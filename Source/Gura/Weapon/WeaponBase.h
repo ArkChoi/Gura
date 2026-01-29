@@ -37,7 +37,12 @@ protected:
 	TObjectPtr<UAnimMontage> ChargeAttackMontage;
 
 public:
+	UFUNCTION()
+	UAnimMontage* GetAttackMontage();
+
+	UFUNCTION()
 	virtual void PlayAttack();
 
+	UFUNCTION()
 	virtual void PlayChargeAttack();
 };

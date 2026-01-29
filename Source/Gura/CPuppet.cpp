@@ -224,7 +224,7 @@ void ACPuppet::Attack(const FInputActionValue& Value)
 
 void ACPuppet::C2S_Attack_Implementation()
 {
-	if (bIsSafe)
+	/*if (bIsSafe)
 	{
 		return;
 	}
@@ -245,6 +245,20 @@ void ACPuppet::C2S_Attack_Implementation()
 		{
 			bIsComboAttack = true;
 		}
+	}*/
+
+	//WeaponBase Á¦ÀÛ ÈÄ
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		if (!ChildWeapon->GetAttackMontage())
+		{
+			PlayAnimMontage(ChildWeapon->GetAttackMontage());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ChildWeapon is Not Cast"));
 	}
 }
 

@@ -33,11 +33,20 @@ void AWeaponBase::Tick(float DeltaTime)
 
 }
 
+UAnimMontage* AWeaponBase::GetAttackMontage()
+{
+	if (true)
+	{
+		return AttackMontage;
+	}
+
+	return NULL;
+}
+
 void AWeaponBase::PlayAttack()
 {
 	if (AttackMontage)
 	{
-
 	}
 	else
 	{
